@@ -1,0 +1,29 @@
+import ("//build/template/qt.gni")
+
+qt("main_window") {
+  uis = [ "main_window.ui" ]
+  mocs = [
+    "code_editor.h",
+    "main_window.h",
+    "project_tree.h",
+  ]
+}
+
+shared_library("ui") {
+  sources = [
+    "file_tree_item.cc",
+    "file_tree_item.h",
+    "folder_tree_item.cc",
+    "folder_tree_item.h",
+    "code_editor.cc",
+    "line_number_area.cc",
+    "line_number_area.h",
+    "main_window.cc",
+    "project_tree.cc",
+  ]
+
+  deps = [
+    ":main_window",
+    "//src/project:project",
+  ]
+}

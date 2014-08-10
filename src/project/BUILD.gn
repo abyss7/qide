@@ -1,0 +1,19 @@
+import("//build/template/pkg_config.gni")
+
+pkg_config("protobuf") {
+  packages = [ "protobuf" ]
+}
+
+shared_library("project") {
+  sources = [
+    "base_project.h",
+    "file_iterator.h",
+    "project.pb.cc",
+    "project.pb.h",
+    "project.proto",
+    "simple_project.cc",
+    "simple_project.h",
+  ]
+
+  configs += [ ":protobuf" ]
+}

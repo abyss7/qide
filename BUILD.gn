@@ -1,0 +1,5 @@
+group("All") {
+  deps = [
+    "//src:qide",
+  ]
+}

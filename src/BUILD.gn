@@ -1,0 +1,9 @@
+executable("qide") {
+  sources = [
+    "main.cc",
+  ]
+
+  deps = [
+    "//src/ui:ui",
+  ]
+}

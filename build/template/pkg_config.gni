@@ -1,0 +1,29 @@
+template("pkg_config") {
+  assert(defined(invoker.packages),
+        "Variable |packages| must be defined to be a list in pkg_config.")
+  config(target_name) {
+    args = invoker.packages
+
+    if (defined(invoker.extra_args)) {
+      args += invoker.extra_args
+    }
+
+    pkgresult = exec_script("//build/pkg-config.py", args, "value")
+    include_dirs = pkgresult[0]
+    cflags = pkgresult[1]
+
+    if (!defined(invoker.ignore_libs) || !invoker.ignore_libs) {
+      libs = pkgresult[2]
+      lib_dirs = pkgresult[3]
+      ldflags = pkgresult[4]
+    }
+
+    if (defined(invoker.defines)) {
+      defines = invoker.defines
+    }
+
+    if (defined(invoker.visibility)) {
+      visibility = invoker.visibility
+    }
+  }
+}

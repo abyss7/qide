@@ -1,0 +1,41 @@
+config("base") {
+  cflags = [
+    "-fPIC",
+    "-pipe",
+    "-pthread",
+    "-Wall",
+    "-Wsign-compare",
+    "-Werror",
+  ]
+  cflags_cc = [
+    "-std=c++11",
+  ]
+  include_dirs = [ "//src" ]
+}
+
+config("debug") {
+  cflags = [
+    "-g",
+    "-O0",
+  ]
+  ldflags = [
+    "-rpath", rebase_path("$root_out_dir/lib"),
+  ]
+}
+
+config("release") {
+  cflags = [
+    "-fomit-frame-pointer",
+    "-O3",
+  ]
+  defines = [
+    "NDEBUG",
+  ]
+  ldflags = [
+    "-rpath", rebase_path("$root_out_dir/lib"), # TODO: remove it when building for distribution.
+  ]
+}
+
+config("version") {
+  defines = [ "VERSION=\"$version\"" ]
+}

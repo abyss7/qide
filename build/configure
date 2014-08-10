@@ -1,0 +1,10 @@
+#!/bin/sh
+
+gn_path=`dirname $0`/../bin
+if [[ `uname` == 'Linux' ]]; then
+  gn_path=$gn_path/linux
+fi
+gn_path=$gn_path/gn
+
+$gn_path --args="config_for_debug=true $@" gen //out/Debug.gn
+$gn_path --args="$@" gen //out/Release.gn

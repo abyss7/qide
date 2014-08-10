@@ -1,0 +1,48 @@
+template("qt") {
+  assert(defined(invoker.uis), "Need variable list |uis| for qt")
+  assert(defined(invoker.mocs), "Need variable list |mocs| for qt")
+
+  ui_action_name = "${target_name}_gen"
+  source_set_name = target_name
+  action_foreach(ui_action_name) {
+    visibility = ":$source_set_name"
+    script = "//build/qt-uic.py"
+    sources = invoker.uis
+    outputs = [ "$target_gen_dir/ui_{{source_name_part}}.h" ]
+    args = [
+      "{{source}}",
+      "-o",
+      rebase_path(target_gen_dir, root_build_dir) + "/ui_{{source_name_part}}.h",
+    ]
+  }
+
+  moc_action_name = "${target_name}_moc"
+  action_foreach(moc_action_name) {
+    visibility = ":$source_set_name"
+    script = "//build/qt-moc.py"
+    sources = invoker.mocs
+    outputs = [ "$target_gen_dir/moc_{{source_name_part}}.cc" ]
+    args = [
+      "{{source}}",
+      "-o",
+      rebase_path(target_gen_dir, root_build_dir) + "/moc_{{source_name_part}}.cc",
+    ]
+  }
+
+  config_name = "${target_name}_includes"
+  config(config_name) {
+    include_dirs = [ "$target_gen_dir" ]
+  }
+
+  source_set(target_name) {
+    sources = get_target_outputs(":$ui_action_name")
+    sources += get_target_outputs(":$moc_action_name")
+
+    deps = [
+      ":$moc_action_name",
+      ":$ui_action_name",
+    ]
+
+    all_dependent_configs = [ ":$config_name" ]
+  }
+}
