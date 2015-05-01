@@ -1,0 +1,1 @@
+Encourages C++ and Generate Ninja development.
