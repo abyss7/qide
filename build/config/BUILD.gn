@@ -6,6 +6,7 @@ config("base") {
     "-Wall",
     "-Wsign-compare",
     "-Werror",
+    "-Wno-inconsistent-missing-override",
   ]
   cflags_cc = [
     "-std=c++11",

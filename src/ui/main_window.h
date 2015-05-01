@@ -11,6 +11,7 @@ class MainWindow : public QMainWindow {
   explicit MainWindow(QWidget* parent = nullptr);
 
  public slots:
+  void NewProject();
   void OpenProject();
   void CloseProject();
   void SelectFile(QTreeWidgetItem* item, int column);

@@ -13,16 +13,50 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
   ui_.splitter->setStretchFactor(1, 2);
 }
 
+void MainWindow::NewProject() {
+  QString project_path = QFileDialog::getExistingDirectory(
+      this, "Choose the New Project Folder", QDir::homePath());
+  if (project_path.isEmpty()) {
+    return;
+  }
+  QString project_name = QDir(project_path).dirName();
+  project_path += QDir::separator() + QString(".project");
+  if (QFile::exists(project_path)) {
+    // TODO: should show warning box.
+    return;
+  }
+
+  std::unique_ptr<ide::SimpleProject> new_project(
+      ide::SimpleProject::New(project_name, project_path));
+
+  ui_.actionClose->activate(QAction::Trigger);
+  try {
+    ui_.projectTree->OpenProject(new_project.release());
+    ui_.splitter->setEnabled(true);
+    ui_.comboBox->setEnabled(false);
+    ui_.codeEditor->setEnabled(false);
+    ui_.actionClose->setEnabled(true);
+  } catch (std::exception& e) {
+    QMessageBox::warning(this, "Error", e.what());
+    ui_.actionClose->activate(QAction::Trigger);
+  }
+}
+
 void MainWindow::OpenProject() {
-  QString file_path = QFileDialog::getOpenFileName(
-      this, "Open Project File", QDir::homePath(), "(*.project)");
-  if (file_path.isEmpty()) {
+  QString project_path = QFileDialog::getExistingDirectory(
+      this, "Open Project Folder", QDir::homePath());
+  if (project_path.isEmpty()) {
+    return;
+  }
+  project_path += QDir::separator() + QString(".project");
+  if (!QFile::exists(project_path)) {
+    // TODO: should show warning box.
     return;
   }
 
   ui_.actionClose->activate(QAction::Trigger);
   try {
-    ui_.projectTree->OpenProject(new ide::SimpleProject(file_path));
+    ui_.projectTree->OpenProject(new ide::SimpleProject(project_path));
     ui_.splitter->setEnabled(true);
     ui_.comboBox->setEnabled(false);
     ui_.codeEditor->setEnabled(false);

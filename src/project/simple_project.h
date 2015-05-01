@@ -7,6 +7,8 @@ namespace ide {
 
 class SimpleProject : public BaseProject {
  public:
+  static SimpleProject* New(const QString& name, const QString& project_path);
+
   explicit SimpleProject(const QString& project_path);
   virtual ~SimpleProject() {}
 
@@ -24,6 +26,8 @@ class SimpleProject : public BaseProject {
   }
 
  private:
+  SimpleProject(const QString& name, const QString& project_path);
+
   int FindFile(const QString& file_path) const;
   void FlushOnDisk() const;
 

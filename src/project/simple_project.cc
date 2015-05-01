@@ -8,7 +8,17 @@
 
 namespace ide {
 
-SimpleProject::SimpleProject(const QString &project_path)
+// static
+SimpleProject* SimpleProject::New(const QString& name,
+                                  const QString& project_path) {
+  std::unique_ptr<SimpleProject> new_project(
+      new SimpleProject(name, project_path));
+  new_project->FlushOnDisk();
+
+  return new_project.release();
+}
+
+SimpleProject::SimpleProject(const QString& project_path)
     : proto_path_(project_path) {
   QFile file(proto_path_);
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -34,7 +44,7 @@ SimpleProject::SimpleProject(const QString &project_path)
   // TODO: check that all files are within root path.
 }
 
-bool SimpleProject::AddFile(QString &file_path) {
+bool SimpleProject::AddFile(QString& file_path) {
   Q_ASSERT(QDir::isAbsolutePath(file_path));
   Q_ASSERT(QFile::exists(file_path));
 
@@ -55,7 +65,7 @@ bool SimpleProject::AddFile(QString &file_path) {
   return true;
 }
 
-void SimpleProject::RemoveFile(const QString &file_path) {
+void SimpleProject::RemoveFile(const QString& file_path) {
   int index = FindFile(file_path);
   if (index != -1) {
     project_.mutable_file()->SwapElements(index, project_.file_size() - 1);
@@ -64,7 +74,13 @@ void SimpleProject::RemoveFile(const QString &file_path) {
   }
 }
 
-int SimpleProject::FindFile(const QString &file_path) const {
+SimpleProject::SimpleProject(const QString& name, const QString& project_path)
+    : proto_path_(project_path),
+      root_path_(QDir::cleanPath(QFileInfo(proto_path_).absoluteDir().path())) {
+  project_.set_name(name.toStdString());
+}
+
+int SimpleProject::FindFile(const QString& file_path) const {
   for (int i = 0; i < project_.file_size(); ++i) {
     auto str = QString::fromStdString(project_.file(i));
     if (file_path == str || file_path == root_path_ + QDir::separator() + str) {

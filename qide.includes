@@ -1,3 +1,5 @@
-src/project
-src/ui
-build
+out/Release.gn/gen/src/ui
+src
+/usr/include/qt5
+/usr/include/qt5/QtCore
+/usr/include/qt5/QtWidgets

@@ -309,12 +309,12 @@
      <x>0</x>
      <y>0</y>
      <width>1127</width>
-     <height>22</height>
+     <height>31</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">
     <property name="title">
-     <string>Project</string>
+     <string>Pro&amp;ject</string>
     </property>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
@@ -324,7 +324,7 @@
    </widget>
    <widget class="QMenu" name="menuWindow">
     <property name="title">
-     <string>Window</string>
+     <string>Wi&amp;ndow</string>
     </property>
     <addaction name="actionToggleProjectPane"/>
    </widget>
@@ -338,7 +338,7 @@
     </iconset>
    </property>
    <property name="text">
-    <string>New</string>
+    <string>&amp;New</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -354,7 +354,7 @@
     </iconset>
    </property>
    <property name="text">
-    <string>Open</string>
+    <string>&amp;Open</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -368,7 +368,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Close</string>
+    <string>&amp;Close</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+W</string>
@@ -381,7 +381,7 @@
     </iconset>
    </property>
    <property name="text">
-    <string>Quit</string>
+    <string>&amp;Quit</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
@@ -398,7 +398,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show Project Tree</string>
+    <string>&amp;Show Project Tree</string>
    </property>
    <property name="shortcut">
     <string>Alt+0</string>
@@ -623,11 +623,28 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionNew</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>NewProject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>563</x>
+     <y>312</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>OpenProject()</slot>
   <slot>CloseProject()</slot>
   <slot>SelectFile(QTreeWidgetItem*,int)</slot>
   <slot>OpenFile(QTreeWidgetItem*,int)</slot>
+  <slot>NewProject()</slot>
  </slots>
 </ui>
