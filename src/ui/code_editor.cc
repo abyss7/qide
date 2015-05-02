@@ -6,7 +6,7 @@
 #include <QDir>
 #include <QMessageBox>
 
-CodeEditor::CodeEditor(QWidget *parent)
+CodeEditor::CodeEditor(QWidget* parent)
     : QPlainTextEdit(parent), line_number_area_(new LineNumberArea(this)) {
   UpdateLineNumberAreaWidth(0);
 }
@@ -18,7 +18,7 @@ QString CodeEditor::CurrentFilePath() const {
   return QString();
 }
 
-bool CodeEditor::OpenFile(FileTreeItem *item) {
+bool CodeEditor::OpenFile(FileTreeItem* item) {
   CloseFile();
 
   current_item_ = item;
@@ -70,7 +70,7 @@ void CodeEditor::SaveFile() {
   }
 }
 
-void CodeEditor::resizeEvent(QResizeEvent *event) {
+void CodeEditor::resizeEvent(QResizeEvent* event) {
   QPlainTextEdit::resizeEvent(event);
 
   QRect contents_rect = contentsRect();
@@ -96,7 +96,7 @@ void CodeEditor::HighlightCurrentLine() {
   setExtraSelections(extra_selections);
 }
 
-void CodeEditor::UpdateLineNumberArea(const QRect &rect, int dy) {
+void CodeEditor::UpdateLineNumberArea(const QRect& rect, int dy) {
   if (dy) {
     line_number_area_->scroll(0, dy);
   } else {

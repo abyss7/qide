@@ -31,11 +31,7 @@ SimpleProject::SimpleProject(const QString& project_path)
     throw std::runtime_error("Project file is malformed!");
   }
 
-  if (!project_.has_root()) {
-    root_path_ = ".";
-  } else {
-    root_path_ = QString::fromStdString(project_.root());
-  }
+  root_path_ = QString::fromStdString(project_.root());
   if (root_path_[0] != '/') {
     root_path_ = QDir::cleanPath(QFileInfo(proto_path_).absoluteDir().path() +
                                  QDir::separator() + root_path_);

@@ -10,18 +10,17 @@ class SimpleProject : public BaseProject {
   static SimpleProject* New(const QString& name, const QString& project_path);
 
   explicit SimpleProject(const QString& project_path);
-  virtual ~SimpleProject() {}
 
-  virtual QString GetName() const override {
+  inline QString GetName() const override {
     return QString::fromStdString(project_.name());
   }
-  virtual const QString& GetRoot() const override { return root_path_; }
-  virtual bool AddFile(QString& file_path) override;
-  virtual void RemoveFile(const QString& file_path) override;
-  virtual FileIterator begin() const override {
+  inline const QString& GetRoot() const override { return root_path_; }
+  bool AddFile(QString& file_path) override;
+  void RemoveFile(const QString& file_path) override;
+  inline FileIterator begin() const override {
     return FileIterator(project_.file().begin());
   }
-  virtual FileIterator end() const override {
+  inline FileIterator end() const override {
     return FileIterator(project_.file().end());
   }
 

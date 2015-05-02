@@ -35,8 +35,141 @@ void protobuf_AssignDesc_project_2fproject_2eproto();
 void protobuf_ShutdownFile_project_2fproject_2eproto();
 
 class Project;
+class Project_Configuration;
 
 // ===================================================================
+
+class Project_Configuration : public ::google::protobuf::Message {
+ public:
+  Project_Configuration();
+  virtual ~Project_Configuration();
+
+  Project_Configuration(const Project_Configuration& from);
+
+  inline Project_Configuration& operator=(const Project_Configuration& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Project_Configuration& default_instance();
+
+  void Swap(Project_Configuration* other);
+
+  // implements Message ----------------------------------------------
+
+  Project_Configuration* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Project_Configuration& from);
+  void MergeFrom(const Project_Configuration& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // required string name = 1;
+  inline bool has_name() const;
+  inline void clear_name();
+  static const int kNameFieldNumber = 1;
+  inline const ::std::string& name() const;
+  inline void set_name(const ::std::string& value);
+  inline void set_name(const char* value);
+  inline void set_name(const char* value, size_t size);
+  inline ::std::string* mutable_name();
+  inline ::std::string* release_name();
+  inline void set_allocated_name(::std::string* name);
+
+  // required string build_dir = 2;
+  inline bool has_build_dir() const;
+  inline void clear_build_dir();
+  static const int kBuildDirFieldNumber = 2;
+  inline const ::std::string& build_dir() const;
+  inline void set_build_dir(const ::std::string& value);
+  inline void set_build_dir(const char* value);
+  inline void set_build_dir(const char* value, size_t size);
+  inline ::std::string* mutable_build_dir();
+  inline ::std::string* release_build_dir();
+  inline void set_allocated_build_dir(::std::string* build_dir);
+
+  // optional string target = 3 [default = "all"];
+  inline bool has_target() const;
+  inline void clear_target();
+  static const int kTargetFieldNumber = 3;
+  inline const ::std::string& target() const;
+  inline void set_target(const ::std::string& value);
+  inline void set_target(const char* value);
+  inline void set_target(const char* value, size_t size);
+  inline ::std::string* mutable_target();
+  inline ::std::string* release_target();
+  inline void set_allocated_target(::std::string* target);
+
+  // repeated string args = 4;
+  inline int args_size() const;
+  inline void clear_args();
+  static const int kArgsFieldNumber = 4;
+  inline const ::std::string& args(int index) const;
+  inline ::std::string* mutable_args(int index);
+  inline void set_args(int index, const ::std::string& value);
+  inline void set_args(int index, const char* value);
+  inline void set_args(int index, const char* value, size_t size);
+  inline ::std::string* add_args();
+  inline void add_args(const ::std::string& value);
+  inline void add_args(const char* value);
+  inline void add_args(const char* value, size_t size);
+  inline const ::google::protobuf::RepeatedPtrField< ::std::string>& args() const;
+  inline ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_args();
+
+  // @@protoc_insertion_point(class_scope:ide.proto.Project.Configuration)
+ private:
+  inline void set_has_name();
+  inline void clear_has_name();
+  inline void set_has_build_dir();
+  inline void clear_has_build_dir();
+  inline void set_has_target();
+  inline void clear_has_target();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint32 _has_bits_[1];
+  mutable int _cached_size_;
+  ::std::string* name_;
+  ::std::string* build_dir_;
+  static ::std::string* _default_target_;
+  ::std::string* target_;
+  ::google::protobuf::RepeatedPtrField< ::std::string> args_;
+  friend void  protobuf_AddDesc_project_2fproject_2eproto();
+  friend void protobuf_AssignDesc_project_2fproject_2eproto();
+  friend void protobuf_ShutdownFile_project_2fproject_2eproto();
+
+  void InitAsDefaultInstance();
+  static Project_Configuration* default_instance_;
+};
+// -------------------------------------------------------------------
 
 class Project : public ::google::protobuf::Message {
  public:
@@ -89,6 +222,8 @@ class Project : public ::google::protobuf::Message {
 
   // nested types ----------------------------------------------------
 
+  typedef Project_Configuration Configuration;
+
   // accessors -------------------------------------------------------
 
   // required string name = 1;
@@ -131,6 +266,18 @@ class Project : public ::google::protobuf::Message {
   inline const ::google::protobuf::RepeatedPtrField< ::std::string>& file() const;
   inline ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_file();
 
+  // repeated .ide.proto.Project.Configuration config = 4;
+  inline int config_size() const;
+  inline void clear_config();
+  static const int kConfigFieldNumber = 4;
+  inline const ::ide::proto::Project_Configuration& config(int index) const;
+  inline ::ide::proto::Project_Configuration* mutable_config(int index);
+  inline ::ide::proto::Project_Configuration* add_config();
+  inline const ::google::protobuf::RepeatedPtrField< ::ide::proto::Project_Configuration >&
+      config() const;
+  inline ::google::protobuf::RepeatedPtrField< ::ide::proto::Project_Configuration >*
+      mutable_config();
+
   // @@protoc_insertion_point(class_scope:ide.proto.Project)
  private:
   inline void set_has_name();
@@ -145,6 +292,7 @@ class Project : public ::google::protobuf::Message {
   ::std::string* name_;
   ::std::string* root_;
   ::google::protobuf::RepeatedPtrField< ::std::string> file_;
+  ::google::protobuf::RepeatedPtrField< ::ide::proto::Project_Configuration > config_;
   friend void  protobuf_AddDesc_project_2fproject_2eproto();
   friend void protobuf_AssignDesc_project_2fproject_2eproto();
   friend void protobuf_ShutdownFile_project_2fproject_2eproto();
@@ -156,6 +304,292 @@ class Project : public ::google::protobuf::Message {
 
 
 // ===================================================================
+
+// Project_Configuration
+
+// required string name = 1;
+inline bool Project_Configuration::has_name() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void Project_Configuration::set_has_name() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void Project_Configuration::clear_has_name() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void Project_Configuration::clear_name() {
+  if (name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    name_->clear();
+  }
+  clear_has_name();
+}
+inline const ::std::string& Project_Configuration::name() const {
+  // @@protoc_insertion_point(field_get:ide.proto.Project.Configuration.name)
+  return *name_;
+}
+inline void Project_Configuration::set_name(const ::std::string& value) {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    name_ = new ::std::string;
+  }
+  name_->assign(value);
+  // @@protoc_insertion_point(field_set:ide.proto.Project.Configuration.name)
+}
+inline void Project_Configuration::set_name(const char* value) {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    name_ = new ::std::string;
+  }
+  name_->assign(value);
+  // @@protoc_insertion_point(field_set_char:ide.proto.Project.Configuration.name)
+}
+inline void Project_Configuration::set_name(const char* value, size_t size) {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    name_ = new ::std::string;
+  }
+  name_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:ide.proto.Project.Configuration.name)
+}
+inline ::std::string* Project_Configuration::mutable_name() {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    name_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:ide.proto.Project.Configuration.name)
+  return name_;
+}
+inline ::std::string* Project_Configuration::release_name() {
+  clear_has_name();
+  if (name_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = name_;
+    name_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void Project_Configuration::set_allocated_name(::std::string* name) {
+  if (name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete name_;
+  }
+  if (name) {
+    set_has_name();
+    name_ = name;
+  } else {
+    clear_has_name();
+    name_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:ide.proto.Project.Configuration.name)
+}
+
+// required string build_dir = 2;
+inline bool Project_Configuration::has_build_dir() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void Project_Configuration::set_has_build_dir() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void Project_Configuration::clear_has_build_dir() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void Project_Configuration::clear_build_dir() {
+  if (build_dir_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    build_dir_->clear();
+  }
+  clear_has_build_dir();
+}
+inline const ::std::string& Project_Configuration::build_dir() const {
+  // @@protoc_insertion_point(field_get:ide.proto.Project.Configuration.build_dir)
+  return *build_dir_;
+}
+inline void Project_Configuration::set_build_dir(const ::std::string& value) {
+  set_has_build_dir();
+  if (build_dir_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    build_dir_ = new ::std::string;
+  }
+  build_dir_->assign(value);
+  // @@protoc_insertion_point(field_set:ide.proto.Project.Configuration.build_dir)
+}
+inline void Project_Configuration::set_build_dir(const char* value) {
+  set_has_build_dir();
+  if (build_dir_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    build_dir_ = new ::std::string;
+  }
+  build_dir_->assign(value);
+  // @@protoc_insertion_point(field_set_char:ide.proto.Project.Configuration.build_dir)
+}
+inline void Project_Configuration::set_build_dir(const char* value, size_t size) {
+  set_has_build_dir();
+  if (build_dir_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    build_dir_ = new ::std::string;
+  }
+  build_dir_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:ide.proto.Project.Configuration.build_dir)
+}
+inline ::std::string* Project_Configuration::mutable_build_dir() {
+  set_has_build_dir();
+  if (build_dir_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    build_dir_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:ide.proto.Project.Configuration.build_dir)
+  return build_dir_;
+}
+inline ::std::string* Project_Configuration::release_build_dir() {
+  clear_has_build_dir();
+  if (build_dir_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = build_dir_;
+    build_dir_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void Project_Configuration::set_allocated_build_dir(::std::string* build_dir) {
+  if (build_dir_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete build_dir_;
+  }
+  if (build_dir) {
+    set_has_build_dir();
+    build_dir_ = build_dir;
+  } else {
+    clear_has_build_dir();
+    build_dir_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:ide.proto.Project.Configuration.build_dir)
+}
+
+// optional string target = 3 [default = "all"];
+inline bool Project_Configuration::has_target() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void Project_Configuration::set_has_target() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void Project_Configuration::clear_has_target() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void Project_Configuration::clear_target() {
+  if (target_ != _default_target_) {
+    target_->assign(*_default_target_);
+  }
+  clear_has_target();
+}
+inline const ::std::string& Project_Configuration::target() const {
+  // @@protoc_insertion_point(field_get:ide.proto.Project.Configuration.target)
+  return *target_;
+}
+inline void Project_Configuration::set_target(const ::std::string& value) {
+  set_has_target();
+  if (target_ == _default_target_) {
+    target_ = new ::std::string;
+  }
+  target_->assign(value);
+  // @@protoc_insertion_point(field_set:ide.proto.Project.Configuration.target)
+}
+inline void Project_Configuration::set_target(const char* value) {
+  set_has_target();
+  if (target_ == _default_target_) {
+    target_ = new ::std::string;
+  }
+  target_->assign(value);
+  // @@protoc_insertion_point(field_set_char:ide.proto.Project.Configuration.target)
+}
+inline void Project_Configuration::set_target(const char* value, size_t size) {
+  set_has_target();
+  if (target_ == _default_target_) {
+    target_ = new ::std::string;
+  }
+  target_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:ide.proto.Project.Configuration.target)
+}
+inline ::std::string* Project_Configuration::mutable_target() {
+  set_has_target();
+  if (target_ == _default_target_) {
+    target_ = new ::std::string(*_default_target_);
+  }
+  // @@protoc_insertion_point(field_mutable:ide.proto.Project.Configuration.target)
+  return target_;
+}
+inline ::std::string* Project_Configuration::release_target() {
+  clear_has_target();
+  if (target_ == _default_target_) {
+    return NULL;
+  } else {
+    ::std::string* temp = target_;
+    target_ = const_cast< ::std::string*>(_default_target_);
+    return temp;
+  }
+}
+inline void Project_Configuration::set_allocated_target(::std::string* target) {
+  if (target_ != _default_target_) {
+    delete target_;
+  }
+  if (target) {
+    set_has_target();
+    target_ = target;
+  } else {
+    clear_has_target();
+    target_ = const_cast< ::std::string*>(_default_target_);
+  }
+  // @@protoc_insertion_point(field_set_allocated:ide.proto.Project.Configuration.target)
+}
+
+// repeated string args = 4;
+inline int Project_Configuration::args_size() const {
+  return args_.size();
+}
+inline void Project_Configuration::clear_args() {
+  args_.Clear();
+}
+inline const ::std::string& Project_Configuration::args(int index) const {
+  // @@protoc_insertion_point(field_get:ide.proto.Project.Configuration.args)
+  return args_.Get(index);
+}
+inline ::std::string* Project_Configuration::mutable_args(int index) {
+  // @@protoc_insertion_point(field_mutable:ide.proto.Project.Configuration.args)
+  return args_.Mutable(index);
+}
+inline void Project_Configuration::set_args(int index, const ::std::string& value) {
+  // @@protoc_insertion_point(field_set:ide.proto.Project.Configuration.args)
+  args_.Mutable(index)->assign(value);
+}
+inline void Project_Configuration::set_args(int index, const char* value) {
+  args_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:ide.proto.Project.Configuration.args)
+}
+inline void Project_Configuration::set_args(int index, const char* value, size_t size) {
+  args_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:ide.proto.Project.Configuration.args)
+}
+inline ::std::string* Project_Configuration::add_args() {
+  return args_.Add();
+}
+inline void Project_Configuration::add_args(const ::std::string& value) {
+  args_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:ide.proto.Project.Configuration.args)
+}
+inline void Project_Configuration::add_args(const char* value) {
+  args_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:ide.proto.Project.Configuration.args)
+}
+inline void Project_Configuration::add_args(const char* value, size_t size) {
+  args_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:ide.proto.Project.Configuration.args)
+}
+inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
+Project_Configuration::args() const {
+  // @@protoc_insertion_point(field_list:ide.proto.Project.Configuration.args)
+  return args_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::std::string>*
+Project_Configuration::mutable_args() {
+  // @@protoc_insertion_point(field_mutable_list:ide.proto.Project.Configuration.args)
+  return &args_;
+}
+
+// -------------------------------------------------------------------
 
 // Project
 
@@ -363,6 +797,36 @@ inline ::google::protobuf::RepeatedPtrField< ::std::string>*
 Project::mutable_file() {
   // @@protoc_insertion_point(field_mutable_list:ide.proto.Project.file)
   return &file_;
+}
+
+// repeated .ide.proto.Project.Configuration config = 4;
+inline int Project::config_size() const {
+  return config_.size();
+}
+inline void Project::clear_config() {
+  config_.Clear();
+}
+inline const ::ide::proto::Project_Configuration& Project::config(int index) const {
+  // @@protoc_insertion_point(field_get:ide.proto.Project.config)
+  return config_.Get(index);
+}
+inline ::ide::proto::Project_Configuration* Project::mutable_config(int index) {
+  // @@protoc_insertion_point(field_mutable:ide.proto.Project.config)
+  return config_.Mutable(index);
+}
+inline ::ide::proto::Project_Configuration* Project::add_config() {
+  // @@protoc_insertion_point(field_add:ide.proto.Project.config)
+  return config_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::ide::proto::Project_Configuration >&
+Project::config() const {
+  // @@protoc_insertion_point(field_list:ide.proto.Project.config)
+  return config_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::ide::proto::Project_Configuration >*
+Project::mutable_config() {
+  // @@protoc_insertion_point(field_mutable_list:ide.proto.Project.config)
+  return &config_;
 }
 
 

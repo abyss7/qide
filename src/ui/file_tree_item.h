@@ -16,5 +16,5 @@ class FileTreeItem : public QTreeWidgetItem {
     setFont(0, tmp_font);
   }
 
-  virtual bool operator<(const QTreeWidgetItem& other) const override;
+  bool operator<(const QTreeWidgetItem& other) const override;
 };

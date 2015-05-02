@@ -2,6 +2,15 @@ package ide.proto;
 
 message Project {
   required string name = 1;
-  optional string root = 2;
+  optional string root = 2 [ default = "." ];
   repeated string file = 3;
+
+  message Configuration {
+    required string name      = 1;
+    required string build_dir = 2;
+    optional string target    = 3 [ default = "all" ];
+    repeated string args      = 4;
+  }
+
+  repeated Configuration config = 4;
 }

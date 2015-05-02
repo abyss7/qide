@@ -6,7 +6,8 @@
 #include <QFileDialog>
 #include <QHeaderView>
 
-ProjectTree::ProjectTree(QWidget* parent) : QTreeWidget(parent) {}
+ProjectTree::ProjectTree(QWidget* parent) : QTreeWidget(parent) {
+}
 
 void ProjectTree::OpenProject(ide::BaseProject* project) {
   Q_ASSERT(project);

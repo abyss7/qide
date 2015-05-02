@@ -23,7 +23,7 @@ class CodeEditor : public QPlainTextEdit {
   void SaveFile();
 
  protected:
-  virtual void resizeEvent(QResizeEvent* event) override;
+  void resizeEvent(QResizeEvent* event) override;
 
  private:
   friend class LineNumberArea;

@@ -12,7 +12,7 @@ class FolderTreeItem : public QTreeWidgetItem {
   FolderTreeItem* AddSubfolder(const QString& name);
   QString FullPath() const;
 
-  virtual bool operator<(const QTreeWidgetItem& other) const override;
+  bool operator<(const QTreeWidgetItem& other) const override;
 
  private:
   QHash<QString, FolderTreeItem*> subfolders_;

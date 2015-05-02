@@ -6,13 +6,13 @@ class CodeEditor;
 
 class LineNumberArea : public QWidget {
  public:
-  explicit LineNumberArea(CodeEditor *editor);
+  explicit LineNumberArea(CodeEditor* editor);
 
   int CalculateWidth() const;
 
  private:
-  virtual void paintEvent(QPaintEvent *event) override;
-  virtual QSize sizeHint() const override;
+  void paintEvent(QPaintEvent* event) override;
+  QSize sizeHint() const override;
 
-  CodeEditor *code_editor_;
+  CodeEditor* code_editor_;
 };

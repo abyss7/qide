@@ -5,8 +5,9 @@
 #include <QPainter>
 #include <QTextBlock>
 
-LineNumberArea::LineNumberArea(CodeEditor *editor)
-    : QWidget(editor), code_editor_(editor) {}
+LineNumberArea::LineNumberArea(CodeEditor* editor)
+    : QWidget(editor), code_editor_(editor) {
+}
 
 int LineNumberArea::CalculateWidth() const {
   int digits = 1;
@@ -19,10 +20,13 @@ int LineNumberArea::CalculateWidth() const {
   return 13 + code_editor_->fontMetrics().width(QLatin1Char('9')) * digits;
 }
 
-QSize LineNumberArea::sizeHint() const { return QSize(CalculateWidth(), 0); }
+QSize LineNumberArea::sizeHint() const {
+  return QSize(CalculateWidth(), 0);
+}
 
-void LineNumberArea::paintEvent(QPaintEvent *event) {
-  if (!code_editor_->isEnabled()) return;
+void LineNumberArea::paintEvent(QPaintEvent* event) {
+  if (!code_editor_->isEnabled())
+    return;
 
   QPainter painter(this);
   painter.fillRect(event->rect(), Qt::lightGray);
