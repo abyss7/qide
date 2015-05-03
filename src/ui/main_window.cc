@@ -1,6 +1,6 @@
 #include <ui/main_window.h>
 
-#include <project/simple_project.h>
+#include <project/ninja_project.h>
 #include <ui/file_tree_item.h>
 #include <ui/folder_tree_item.h>
 
@@ -20,7 +20,7 @@ void MainWindow::NewProject() {
     return;
   }
   QString project_name = QDir(project_path).dirName();
-  project_path += QDir::separator() + QString(".project");
+  project_path += QDir::separator() + QString(".qide");
   if (QFile::exists(project_path)) {
     // TODO: should show warning box.
     return;
@@ -48,7 +48,7 @@ void MainWindow::OpenProject() {
   if (project_path.isEmpty()) {
     return;
   }
-  project_path += QDir::separator() + QString(".project");
+  project_path += QDir::separator() + QString(".qide");
   if (!QFile::exists(project_path)) {
     // TODO: should show warning box.
     return;
@@ -56,7 +56,7 @@ void MainWindow::OpenProject() {
 
   ui_.actionClose->activate(QAction::Trigger);
   try {
-    ui_.projectTree->OpenProject(new ide::SimpleProject(project_path));
+    ui_.projectTree->OpenProject(new ide::NinjaProject(project_path));
     ui_.splitter->setEnabled(true);
     ui_.comboBox->setEnabled(false);
     ui_.codeEditor->setEnabled(false);

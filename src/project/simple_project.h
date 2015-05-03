@@ -24,6 +24,9 @@ class SimpleProject : public BaseProject {
     return FileIterator(project_.file().end());
   }
 
+ protected:
+  proto::Project project_;
+
  private:
   SimpleProject(const QString& name, const QString& project_path);
 
@@ -32,7 +35,6 @@ class SimpleProject : public BaseProject {
 
   const QString proto_path_;
   QString root_path_;
-  proto::Project project_;
 };
 
 }  // namespace ide

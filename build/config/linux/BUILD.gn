@@ -1,18 +1,14 @@
 import("//build/template/pkg_config.gni")
 
 pkg_config("qt5") {
-  packages = [
-    "Qt5Widgets",
-  ]
+  packages = [ "Qt5Widgets" ]
 }
 
 config("base") {
-  defines = [
-    "OS_LINUX",
-  ]
+  defines = [ "OS_LINUX" ]
 
   ldflags = [
     "--no-undefined",
-    "-rdynamic",      # for |backtrace()|
+    "-rdynamic",  # for |backtrace()|
   ]
 }

@@ -179,7 +179,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="comboBox_2"/>
+            <widget class="QComboBox" name="configurationBox"/>
            </item>
           </layout>
          </widget>
@@ -245,6 +245,9 @@
              <iconset theme="document-save">
               <normaloff/>
              </iconset>
+            </property>
+            <property name="shortcut">
+             <string>Ctrl+S</string>
             </property>
             <property name="autoRaise">
              <bool>true</bool>

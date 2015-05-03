@@ -43,7 +43,8 @@ void ProjectTree::AddExistingFile() {
   }
   QString file_name = QFileDialog::getOpenFileName(
       this, "Add File To Project",
-      static_cast<const FolderTreeItem*>(item)->FullPath());
+      static_cast<const FolderTreeItem*>(item)->FullPath(), "All files (*.*)",
+      0, QFileDialog::HideNameFilterDetails);
   if (file_name.isEmpty()) {
     return;
   }
@@ -59,6 +60,7 @@ void ProjectTree::RemoveFile() {
   auto* item = selectedItems().front();
   project_->RemoveFile(static_cast<FileTreeItem*>(item)->FullPath());
   item->parent()->removeChild(item);
+  // TODO: also remove all empty parent folders.
   delete item;
 }
 

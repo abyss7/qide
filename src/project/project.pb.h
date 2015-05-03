@@ -128,22 +128,6 @@ class Project_Configuration : public ::google::protobuf::Message {
   inline ::std::string* release_target();
   inline void set_allocated_target(::std::string* target);
 
-  // repeated string args = 4;
-  inline int args_size() const;
-  inline void clear_args();
-  static const int kArgsFieldNumber = 4;
-  inline const ::std::string& args(int index) const;
-  inline ::std::string* mutable_args(int index);
-  inline void set_args(int index, const ::std::string& value);
-  inline void set_args(int index, const char* value);
-  inline void set_args(int index, const char* value, size_t size);
-  inline ::std::string* add_args();
-  inline void add_args(const ::std::string& value);
-  inline void add_args(const char* value);
-  inline void add_args(const char* value, size_t size);
-  inline const ::google::protobuf::RepeatedPtrField< ::std::string>& args() const;
-  inline ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_args();
-
   // @@protoc_insertion_point(class_scope:ide.proto.Project.Configuration)
  private:
   inline void set_has_name();
@@ -161,7 +145,6 @@ class Project_Configuration : public ::google::protobuf::Message {
   ::std::string* build_dir_;
   static ::std::string* _default_target_;
   ::std::string* target_;
-  ::google::protobuf::RepeatedPtrField< ::std::string> args_;
   friend void  protobuf_AddDesc_project_2fproject_2eproto();
   friend void protobuf_AssignDesc_project_2fproject_2eproto();
   friend void protobuf_ShutdownFile_project_2fproject_2eproto();
@@ -238,7 +221,7 @@ class Project : public ::google::protobuf::Message {
   inline ::std::string* release_name();
   inline void set_allocated_name(::std::string* name);
 
-  // optional string root = 2;
+  // optional string root = 2 [default = "."];
   inline bool has_root() const;
   inline void clear_root();
   static const int kRootFieldNumber = 2;
@@ -290,6 +273,7 @@ class Project : public ::google::protobuf::Message {
   ::google::protobuf::uint32 _has_bits_[1];
   mutable int _cached_size_;
   ::std::string* name_;
+  static ::std::string* _default_root_;
   ::std::string* root_;
   ::google::protobuf::RepeatedPtrField< ::std::string> file_;
   ::google::protobuf::RepeatedPtrField< ::ide::proto::Project_Configuration > config_;
@@ -535,60 +519,6 @@ inline void Project_Configuration::set_allocated_target(::std::string* target) {
   // @@protoc_insertion_point(field_set_allocated:ide.proto.Project.Configuration.target)
 }
 
-// repeated string args = 4;
-inline int Project_Configuration::args_size() const {
-  return args_.size();
-}
-inline void Project_Configuration::clear_args() {
-  args_.Clear();
-}
-inline const ::std::string& Project_Configuration::args(int index) const {
-  // @@protoc_insertion_point(field_get:ide.proto.Project.Configuration.args)
-  return args_.Get(index);
-}
-inline ::std::string* Project_Configuration::mutable_args(int index) {
-  // @@protoc_insertion_point(field_mutable:ide.proto.Project.Configuration.args)
-  return args_.Mutable(index);
-}
-inline void Project_Configuration::set_args(int index, const ::std::string& value) {
-  // @@protoc_insertion_point(field_set:ide.proto.Project.Configuration.args)
-  args_.Mutable(index)->assign(value);
-}
-inline void Project_Configuration::set_args(int index, const char* value) {
-  args_.Mutable(index)->assign(value);
-  // @@protoc_insertion_point(field_set_char:ide.proto.Project.Configuration.args)
-}
-inline void Project_Configuration::set_args(int index, const char* value, size_t size) {
-  args_.Mutable(index)->assign(
-    reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:ide.proto.Project.Configuration.args)
-}
-inline ::std::string* Project_Configuration::add_args() {
-  return args_.Add();
-}
-inline void Project_Configuration::add_args(const ::std::string& value) {
-  args_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add:ide.proto.Project.Configuration.args)
-}
-inline void Project_Configuration::add_args(const char* value) {
-  args_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add_char:ide.proto.Project.Configuration.args)
-}
-inline void Project_Configuration::add_args(const char* value, size_t size) {
-  args_.Add()->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_add_pointer:ide.proto.Project.Configuration.args)
-}
-inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
-Project_Configuration::args() const {
-  // @@protoc_insertion_point(field_list:ide.proto.Project.Configuration.args)
-  return args_;
-}
-inline ::google::protobuf::RepeatedPtrField< ::std::string>*
-Project_Configuration::mutable_args() {
-  // @@protoc_insertion_point(field_mutable_list:ide.proto.Project.Configuration.args)
-  return &args_;
-}
-
 // -------------------------------------------------------------------
 
 // Project
@@ -669,7 +599,7 @@ inline void Project::set_allocated_name(::std::string* name) {
   // @@protoc_insertion_point(field_set_allocated:ide.proto.Project.name)
 }
 
-// optional string root = 2;
+// optional string root = 2 [default = "."];
 inline bool Project::has_root() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -680,8 +610,8 @@ inline void Project::clear_has_root() {
   _has_bits_[0] &= ~0x00000002u;
 }
 inline void Project::clear_root() {
-  if (root_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    root_->clear();
+  if (root_ != _default_root_) {
+    root_->assign(*_default_root_);
   }
   clear_has_root();
 }
@@ -691,7 +621,7 @@ inline const ::std::string& Project::root() const {
 }
 inline void Project::set_root(const ::std::string& value) {
   set_has_root();
-  if (root_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+  if (root_ == _default_root_) {
     root_ = new ::std::string;
   }
   root_->assign(value);
@@ -699,7 +629,7 @@ inline void Project::set_root(const ::std::string& value) {
 }
 inline void Project::set_root(const char* value) {
   set_has_root();
-  if (root_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+  if (root_ == _default_root_) {
     root_ = new ::std::string;
   }
   root_->assign(value);
@@ -707,7 +637,7 @@ inline void Project::set_root(const char* value) {
 }
 inline void Project::set_root(const char* value, size_t size) {
   set_has_root();
-  if (root_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+  if (root_ == _default_root_) {
     root_ = new ::std::string;
   }
   root_->assign(reinterpret_cast<const char*>(value), size);
@@ -715,24 +645,24 @@ inline void Project::set_root(const char* value, size_t size) {
 }
 inline ::std::string* Project::mutable_root() {
   set_has_root();
-  if (root_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    root_ = new ::std::string;
+  if (root_ == _default_root_) {
+    root_ = new ::std::string(*_default_root_);
   }
   // @@protoc_insertion_point(field_mutable:ide.proto.Project.root)
   return root_;
 }
 inline ::std::string* Project::release_root() {
   clear_has_root();
-  if (root_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+  if (root_ == _default_root_) {
     return NULL;
   } else {
     ::std::string* temp = root_;
-    root_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    root_ = const_cast< ::std::string*>(_default_root_);
     return temp;
   }
 }
 inline void Project::set_allocated_root(::std::string* root) {
-  if (root_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+  if (root_ != _default_root_) {
     delete root_;
   }
   if (root) {
@@ -740,7 +670,7 @@ inline void Project::set_allocated_root(::std::string* root) {
     root_ = root;
   } else {
     clear_has_root();
-    root_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    root_ = const_cast< ::std::string*>(_default_root_);
   }
   // @@protoc_insertion_point(field_set_allocated:ide.proto.Project.root)
 }

@@ -9,7 +9,6 @@ message Project {
     required string name      = 1;
     required string build_dir = 2;
     optional string target    = 3 [ default = "all" ];
-    repeated string args      = 4;
   }
 
   repeated Configuration config = 4;

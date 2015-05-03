@@ -1,6 +1,6 @@
 template("pkg_config") {
   assert(defined(invoker.packages),
-        "Variable |packages| must be defined to be a list in pkg_config.")
+         "Variable |packages| must be defined to be a list in pkg_config.")
   config(target_name) {
     args = invoker.packages
 

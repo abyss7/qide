@@ -8,9 +8,7 @@ config("base") {
     "-Werror",
     "-Wno-inconsistent-missing-override",
   ]
-  cflags_cc = [
-    "-std=c++11",
-  ]
+  cflags_cc = [ "-std=c++11" ]
   include_dirs = [ "//src" ]
 }
 
@@ -20,7 +18,8 @@ config("debug") {
     "-O0",
   ]
   ldflags = [
-    "-rpath", rebase_path("$root_out_dir/lib"),
+    "-rpath",
+    rebase_path("$root_out_dir"),
   ]
 }
 
@@ -29,11 +28,10 @@ config("release") {
     "-fomit-frame-pointer",
     "-O3",
   ]
-  defines = [
-    "NDEBUG",
-  ]
+  defines = [ "NDEBUG" ]
   ldflags = [
-    "-rpath", rebase_path("$root_out_dir/lib"), # TODO: remove it when building for distribution.
+    "-rpath",
+    rebase_path("$root_out_dir"),  # TODO: remove it when building for distribution.
   ]
 }
 

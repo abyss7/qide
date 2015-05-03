@@ -1,8 +1,10 @@
-import ("//build/template/qt.gni")
+import("//build/template/qt.gni")
 
 qt("main_window") {
   uis = [ "main_window.ui" ]
   mocs = [
+    # FIXME: can't do `gn check` since the GN unconditionally checks headers
+    #        in sources even inside custom actions.
     "code_editor.h",
     "main_window.h",
     "project_tree.h",
@@ -11,19 +13,22 @@ qt("main_window") {
 
 shared_library("ui") {
   sources = [
+    "code_editor.cc",
+    "code_editor.h",
     "file_tree_item.cc",
     "file_tree_item.h",
     "folder_tree_item.cc",
     "folder_tree_item.h",
-    "code_editor.cc",
     "line_number_area.cc",
     "line_number_area.h",
     "main_window.cc",
+    "main_window.h",
     "project_tree.cc",
+    "project_tree.h",
   ]
 
   deps = [
-    ":main_window",
     "//src/project:project",
+    ":main_window",
   ]
 }
