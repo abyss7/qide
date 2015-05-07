@@ -9,7 +9,7 @@
 ProjectTree::ProjectTree(QWidget* parent) : QTreeWidget(parent) {
 }
 
-void ProjectTree::OpenProject(ide::BaseProject* project) {
+void ProjectTree::OpenProject(ide::SimpleProject* project) {
   Q_ASSERT(project);
   Q_ASSERT(!project_);
 
@@ -22,7 +22,12 @@ void ProjectTree::OpenProject(ide::BaseProject* project) {
   sortByColumn(0, Qt::AscendingOrder);
 
   for (const auto& path : *project_) {
-    ShowFile(path);
+    ShowFile(path, false);
+  }
+
+  for (auto it = project_->temporary_begin(), end = project_->temporary_end();
+       it != end; ++it) {
+    ShowFile(*it, true);
   }
 }
 
@@ -37,20 +42,24 @@ void ProjectTree::AddNewFile() {
 }
 
 void ProjectTree::AddExistingFile() {
-  const auto* item = selectedItems().front();
-  if (item->type() == FileTreeItem::Type) {
-    item = item->parent();
+  QString dialog_path = project_->GetRoot();
+
+  if (!selectedItems().empty()) {
+    const auto* item = selectedItems().front();
+    if (item->type() == FileTreeItem::Type) {
+      item = item->parent();
+    }
+    dialog_path = static_cast<const FolderTreeItem*>(item)->FullPath();
   }
   QString file_name = QFileDialog::getOpenFileName(
-      this, "Add File To Project",
-      static_cast<const FolderTreeItem*>(item)->FullPath(), "All files (*.*)",
-      0, QFileDialog::HideNameFilterDetails);
+      this, "Add File To Project", dialog_path, "All files (*.*)", 0,
+      QFileDialog::HideNameFilterDetails);
   if (file_name.isEmpty()) {
     return;
   }
 
-  if (project_->AddFile(file_name)) {
-    ShowFile(file_name);
+  if (project_->AddFile(file_name, false)) {
+    ShowFile(file_name, false);
   }
 }
 
@@ -64,7 +73,7 @@ void ProjectTree::RemoveFile() {
   delete item;
 }
 
-void ProjectTree::ShowFile(const QString& rootless_file_name) {
+void ProjectTree::ShowFile(const QString& rootless_file_name, bool temporary) {
   Q_ASSERT(!QDir::isAbsolutePath(rootless_file_name));
 
   auto path_elements = rootless_file_name.split(QDir::separator());
@@ -76,5 +85,5 @@ void ProjectTree::ShowFile(const QString& rootless_file_name) {
     folder_item = folder_item->AddSubfolder(path);
   }
 
-  folder_item->addChild(new FileTreeItem(file_name));
+  folder_item->addChild(new FileTreeItem(file_name, temporary));
 }

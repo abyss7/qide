@@ -7,6 +7,8 @@ pkg_config("protobuf") {
 shared_library("project") {
   sources = [
     "base_project.h",
+    "clang_index.cc",
+    "clang_index.h",
     "file_iterator.h",
     "ninja_project.cc",
     "ninja_project.h",
@@ -21,4 +23,6 @@ shared_library("project") {
   deps = [
     "//src/third_party/ninja:ninja",
   ]
+
+  libs = [ "clang" ]
 }

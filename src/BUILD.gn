@@ -6,4 +6,6 @@ executable("qide") {
   deps = [
     "//src/ui:ui",
   ]
+
+  libs = [ "profiler" ]
 }

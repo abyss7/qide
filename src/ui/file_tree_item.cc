@@ -2,9 +2,14 @@
 
 #include <QDir>
 
-FileTreeItem::FileTreeItem(const QString& name) : QTreeWidgetItem(Type) {
+FileTreeItem::FileTreeItem(const QString& name, bool temporary)
+    : QTreeWidgetItem(Type) {
   setText(0, name);
   setIcon(0, QIcon::fromTheme("text-x-generic"));
+
+  auto tmp_font = font(0);
+  tmp_font.setUnderline(!temporary);
+  setFont(0, tmp_font);
 }
 
 QString FileTreeItem::FullPath() const {

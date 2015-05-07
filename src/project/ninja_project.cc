@@ -24,12 +24,17 @@ void NinjaProject::SwitchConfiguration(unsigned index) {
                    QString::fromStdString(config.build_dir());
   Ninja ninja(build_dir);
 
-  project_.clear_file();
   auto inputs = ninja.QueryAllInputs(config.target());
   for (auto& input : inputs) {
     // We need to filter out the generated files.
     if (QFile::exists(input)) {
-      AddFile(input);
+      AddFile(input, true);
+    }
+  }
+
+  for (auto i = 0; i < project_.file().size(); ++i) {
+    if (temporary_files_.contains(QString::fromStdString(project_.file(i)))) {
+      RemoveFile(i);
     }
   }
 

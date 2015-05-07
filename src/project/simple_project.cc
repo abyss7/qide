@@ -40,7 +40,7 @@ SimpleProject::SimpleProject(const QString& project_path)
   // TODO: check that all files are within root path.
 }
 
-bool SimpleProject::AddFile(QString& file_path) {
+bool SimpleProject::AddFile(QString& file_path, bool temporary) {
   Q_ASSERT(QDir::isAbsolutePath(file_path));
   Q_ASSERT(QFile::exists(file_path));
 
@@ -51,20 +51,27 @@ bool SimpleProject::AddFile(QString& file_path) {
 
   file_path = clean_file_path.mid(root_path_.size() + 1);
 
-  if (FindFile(file_path) != -1) {
+  if (temporary_files_.contains(file_path) || FindFile(file_path) != -1) {
     return false;
   }
 
-  project_.add_file()->assign(file_path.toStdString());
-  FlushOnDisk();
+  if (!temporary) {
+    project_.add_file()->assign(file_path.toStdString());
+    FlushOnDisk();
+  } else {
+    temporary_files_.insert(file_path);
+  }
 
   return true;
 }
 
 void SimpleProject::RemoveFile(const QString& file_path) {
-  int index = FindFile(file_path);
-  if (index != -1) {
-    project_.mutable_file()->SwapElements(index, project_.file_size() - 1);
+  RemoveFile(FindFile(file_path));
+}
+
+void SimpleProject::RemoveFile(int file_index) {
+  if (file_index > -1 && file_index < project_.file_size()) {
+    project_.mutable_file()->SwapElements(file_index, project_.file_size() - 1);
     project_.mutable_file()->RemoveLast();
     FlushOnDisk();
   }

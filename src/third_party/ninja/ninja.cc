@@ -26,8 +26,8 @@ Ninja::~Ninja() {
   QDir::setCurrent(previous_dir_);
 }
 
-Ninja::QueryResult Ninja::QueryAllInputs(const std::string& target) {
-  QueryResult results;
+QStringList Ninja::QueryAllInputs(const std::string& target) {
+  QStringList results;
 
   string err;
   RealFileReader file_reader;

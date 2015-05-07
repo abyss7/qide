@@ -5,6 +5,7 @@
 
 #include <QDir>
 #include <QMessageBox>
+#include <QPalette>
 
 CodeEditor::CodeEditor(QWidget* parent)
     : QPlainTextEdit(parent), line_number_area_(new LineNumberArea(this)) {
@@ -84,9 +85,7 @@ void CodeEditor::HighlightCurrentLine() {
   if (!isReadOnly() && isEnabled()) {
     QTextEdit::ExtraSelection selection;
 
-    QColor line_color = QColor(Qt::yellow).lighter(160);
-
-    selection.format.setBackground(line_color);
+    selection.format.setBackground(palette().highlight().color());
     selection.format.setProperty(QTextFormat::FullWidthSelection, true);
     selection.cursor = textCursor();
     selection.cursor.clearSelection();

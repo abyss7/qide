@@ -6,7 +6,7 @@ class FileTreeItem : public QTreeWidgetItem {
  public:
   enum { Type = UserType + 2 };
 
-  explicit FileTreeItem(const QString& name);
+  explicit FileTreeItem(const QString& name, bool temporary);
 
   QString FullPath() const;
 
