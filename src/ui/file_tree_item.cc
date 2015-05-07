@@ -5,6 +5,7 @@
 FileTreeItem::FileTreeItem(const QString& name, bool temporary)
     : QTreeWidgetItem(Type) {
   setText(0, name);
+  setToolTip(0, name);
   setIcon(0, QIcon::fromTheme("text-x-generic"));
 
   auto tmp_font = font(0);
