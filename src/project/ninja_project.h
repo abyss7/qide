@@ -9,6 +9,11 @@ class NinjaProject : public SimpleProject {
   explicit NinjaProject(const QString& project_path,
                         unsigned default_config = 0);
 
+  inline unsigned ConfigurationSize() const { return project_.config_size(); }
+  inline QString GetConfigurationName(unsigned index) const {
+    return QString::fromStdString(project_.config(index).name());
+  }
+  inline unsigned GetCurrentConfiguration() const { return current_config_; }
   void SwitchConfiguration(unsigned index);
 
  private:

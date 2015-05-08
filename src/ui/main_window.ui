@@ -179,7 +179,11 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="configurationBox"/>
+            <widget class="QComboBox" name="configurationBox">
+             <property name="duplicatesEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -632,6 +636,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>configurationBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>SwitchConfiguration(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>220</x>
+     <y>49</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>563</x>
+     <y>312</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>codeEditor</sender>
+   <signal>modificationChanged(bool)</signal>
+   <receiver>buttonSaveFile</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>731</x>
+     <y>346</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>353</x>
+     <y>50</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>OpenProject()</slot>
@@ -639,5 +675,6 @@
   <slot>SelectFile(QTreeWidgetItem*,int)</slot>
   <slot>OpenFile(QTreeWidgetItem*,int)</slot>
   <slot>NewProject()</slot>
+  <slot>SwitchConfiguration(int)</slot>
  </slots>
 </ui>

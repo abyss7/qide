@@ -9,7 +9,7 @@
 ProjectTree::ProjectTree(QWidget* parent) : QTreeWidget(parent) {
 }
 
-void ProjectTree::OpenProject(ide::SimpleProject* project) {
+void ProjectTree::OpenProject(ide::NinjaProject* project) {
   Q_ASSERT(project);
   Q_ASSERT(!project_);
 
@@ -18,6 +18,25 @@ void ProjectTree::OpenProject(ide::SimpleProject* project) {
   auto* root_item = new FolderTreeItem(project_->GetRoot());
   setHeaderLabel(project_->GetName());
   header()->show();
+  addTopLevelItem(root_item);
+  sortByColumn(0, Qt::AscendingOrder);
+
+  for (const auto& path : *project_) {
+    ShowFile(path, false);
+  }
+
+  for (auto it = project_->temporary_begin(), end = project_->temporary_end();
+       it != end; ++it) {
+    ShowFile(*it, true);
+  }
+}
+
+void ProjectTree::SwitchConfiguration(unsigned index) {
+  clear();
+
+  project_->SwitchConfiguration(index);
+
+  auto* root_item = new FolderTreeItem(project_->GetRoot());
   addTopLevelItem(root_item);
   sortByColumn(0, Qt::AscendingOrder);
 

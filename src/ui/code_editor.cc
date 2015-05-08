@@ -36,6 +36,8 @@ bool CodeEditor::OpenFile(FileTreeItem* item) {
   setEnabled(true);
   HighlightCurrentLine();
 
+  modificationChanged(false);
+
   return true;
 }
 
@@ -68,6 +70,8 @@ void CodeEditor::SaveFile() {
     } else {
       QMessageBox::warning(this, "Error", "Can't save opened file!");
     }
+
+    modificationChanged(false);
   }
 }
 

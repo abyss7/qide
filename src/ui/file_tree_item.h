@@ -17,4 +17,6 @@ class FileTreeItem : public QTreeWidgetItem {
   }
 
   bool operator<(const QTreeWidgetItem& other) const override;
+
+  const bool temporary;
 };

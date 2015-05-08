@@ -13,6 +13,7 @@ class MainWindow : public QMainWindow {
  public slots:
   void NewProject();
   void OpenProject();
+  void SwitchConfiguration(int index);
   void CloseProject();
   void SelectFile(QTreeWidgetItem* item, int column);
   void OpenFile(QTreeWidgetItem* item, int column);

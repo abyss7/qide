@@ -3,7 +3,7 @@
 #include <QDir>
 
 FileTreeItem::FileTreeItem(const QString& name, bool temporary)
-    : QTreeWidgetItem(Type) {
+    : QTreeWidgetItem(Type), temporary(temporary) {
   setText(0, name);
   setToolTip(0, name);
   setIcon(0, QIcon::fromTheme("text-x-generic"));

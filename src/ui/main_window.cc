@@ -26,20 +26,21 @@ void MainWindow::NewProject() {
     return;
   }
 
-  std::unique_ptr<ide::SimpleProject> new_project(
-      ide::SimpleProject::New(project_name, project_path));
+  // TODO: reimplement New Ninja Project.
+  //  std::unique_ptr<ide::NinjaProject> new_project(
+  //      ide::NinjaProject::New(project_name, project_path));
 
-  ui_.actionClose->activate(QAction::Trigger);
-  try {
-    ui_.projectTree->OpenProject(new_project.release());
-    ui_.splitter->setEnabled(true);
-    ui_.comboBox->setEnabled(false);
-    ui_.codeEditor->setEnabled(false);
-    ui_.actionClose->setEnabled(true);
-  } catch (std::exception& e) {
-    QMessageBox::warning(this, "Error", e.what());
-    ui_.actionClose->activate(QAction::Trigger);
-  }
+  //  ui_.actionClose->activate(QAction::Trigger);
+  //  try {
+  //    ui_.projectTree->OpenProject(new_project.release());
+  //    ui_.splitter->setEnabled(true);
+  //    ui_.comboBox->setEnabled(false);
+  //    ui_.codeEditor->setEnabled(false);
+  //    ui_.actionClose->setEnabled(true);
+  //  } catch (std::exception& e) {
+  //    QMessageBox::warning(this, "Error", e.what());
+  //    ui_.actionClose->activate(QAction::Trigger);
+  //  }
 }
 
 void MainWindow::OpenProject() {
@@ -56,15 +57,33 @@ void MainWindow::OpenProject() {
 
   ui_.actionClose->activate(QAction::Trigger);
   try {
-    ui_.projectTree->OpenProject(new ide::NinjaProject(project_path));
+    auto new_project = new ide::NinjaProject(project_path);
+    ui_.projectTree->OpenProject(new_project);
     ui_.splitter->setEnabled(true);
     ui_.comboBox->setEnabled(false);
     ui_.codeEditor->setEnabled(false);
     ui_.actionClose->setEnabled(true);
+
+    for (auto i = 0u; i < new_project->ConfigurationSize(); ++i) {
+      ui_.configurationBox->addItem(new_project->GetConfigurationName(i));
+    }
+    ui_.configurationBox->setCurrentIndex(0);
   } catch (std::exception& e) {
     QMessageBox::warning(this, "Error", e.what());
     ui_.actionClose->activate(QAction::Trigger);
   }
+}
+
+void MainWindow::SwitchConfiguration(int index) {
+  if (index == -1) {
+    return;
+  }
+
+  ui_.codeEditor->CloseFile();
+  ui_.buttonRemoveFile->setEnabled(false);
+  ui_.buttonSaveFile->setEnabled(false);
+
+  ui_.projectTree->SwitchConfiguration(static_cast<unsigned>(index));
 }
 
 void MainWindow::CloseProject() {
@@ -74,10 +93,13 @@ void MainWindow::CloseProject() {
   ui_.actionClose->setEnabled(false);
   ui_.buttonRemoveFile->setEnabled(false);
   ui_.buttonSaveFile->setEnabled(false);
+  ui_.configurationBox->clear();
 }
 
 void MainWindow::SelectFile(QTreeWidgetItem* item, int) {
-  ui_.buttonRemoveFile->setEnabled(item->type() == FileTreeItem::Type);
+  ui_.buttonRemoveFile->setEnabled(
+      item->type() == FileTreeItem::Type &&
+      !static_cast<FileTreeItem*>(item)->temporary);
 }
 
 void MainWindow::OpenFile(QTreeWidgetItem* item, int) {
@@ -85,7 +107,5 @@ void MainWindow::OpenFile(QTreeWidgetItem* item, int) {
     return;
   }
 
-  if (ui_.codeEditor->OpenFile(static_cast<FileTreeItem*>(item))) {
-    ui_.buttonSaveFile->setEnabled(true);
-  }
+  ui_.codeEditor->OpenFile(static_cast<FileTreeItem*>(item));
 }

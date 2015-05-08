@@ -1,6 +1,6 @@
 #pragma once
 
-#include <project/simple_project.h>
+#include <project/ninja_project.h>
 
 #include <QMenu>
 #include <QTreeWidget>
@@ -13,7 +13,8 @@ class ProjectTree : public QTreeWidget {
  public:
   explicit ProjectTree(QWidget* parent = nullptr);
 
-  void OpenProject(ide::SimpleProject* project);
+  void OpenProject(ide::NinjaProject* project);
+  void SwitchConfiguration(unsigned index);
   void CloseProject();
 
  public slots:
@@ -24,5 +25,5 @@ class ProjectTree : public QTreeWidget {
  private:
   void ShowFile(const QString& rootless_file_name, bool temporary);
 
-  std::unique_ptr<ide::SimpleProject> project_;
+  std::unique_ptr<ide::NinjaProject> project_;
 };
