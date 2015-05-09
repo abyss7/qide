@@ -5,11 +5,11 @@ message Project {
   optional string root = 2 [ default = "." ];
   repeated string file = 3;
 
-  message Configuration {
+  message Variant {
     required string name      = 1;
     required string build_dir = 2;
     optional string target    = 3 [ default = "all" ];
   }
 
-  repeated Configuration config = 4;
+  repeated Variant variant = 4;
 }

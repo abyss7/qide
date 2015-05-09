@@ -9,6 +9,7 @@ class FileTreeItem : public QTreeWidgetItem {
   explicit FileTreeItem(const QString& name, bool temporary);
 
   QString FullPath() const;
+  QString RelativePath() const;
 
   inline void SetFontBold(bool bold) {
     auto tmp_font = font(0);

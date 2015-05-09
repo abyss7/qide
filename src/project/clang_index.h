@@ -1,7 +1,8 @@
 #pragma once
 
+#include <base/alias.h>
+
 #include <QHash>
-#include <QStringList>
 
 #include <clang-c/Index.h>
 
@@ -9,17 +10,16 @@ namespace ide {
 
 class ClangIndex {
  public:
-  using VisitorFn = std::function<void(unsigned line, unsigned column,
-                                       unsigned length, CXTokenKind)>;
+  using VisitorFn = Fn<void(ui32 line, ui32 column, ui32 length, CXTokenKind)>;
 
   ~ClangIndex();
 
-  void Parse(const QString& path, const QStringList& args);
-  void Visit(const QString& path, VisitorFn visitor);
+  void Parse(const String& path, const StringList& args);
+  void Visit(const String& path, VisitorFn visitor);
 
  private:
   CXIndex index_ = clang_createIndex(0, 0);
-  QHash<QString, CXTranslationUnit> units_;
+  HashMap<String, CXTranslationUnit> units_;
 };
 
 }  // namespace ide

@@ -558,9 +558,9 @@
   </connection>
   <connection>
    <sender>projectTree</sender>
-   <signal>itemClicked(QTreeWidgetItem*,int)</signal>
+   <signal>currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)</signal>
    <receiver>MainWindow</receiver>
-   <slot>SelectFile(QTreeWidgetItem*,int)</slot>
+   <slot>SelectFile(QTreeWidgetItem*,QTreeWidgetItem*)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>240</x>
@@ -640,7 +640,7 @@
    <sender>configurationBox</sender>
    <signal>currentIndexChanged(int)</signal>
    <receiver>MainWindow</receiver>
-   <slot>SwitchConfiguration(int)</slot>
+   <slot>SwitchVariant(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>220</x>
@@ -672,9 +672,9 @@
  <slots>
   <slot>OpenProject()</slot>
   <slot>CloseProject()</slot>
-  <slot>SelectFile(QTreeWidgetItem*,int)</slot>
+  <slot>SelectFile(QTreeWidgetItem*,QTreeWidgetItem*)</slot>
   <slot>OpenFile(QTreeWidgetItem*,int)</slot>
   <slot>NewProject()</slot>
-  <slot>SwitchConfiguration(int)</slot>
+  <slot>SwitchVariant(int)</slot>
  </slots>
 </ui>

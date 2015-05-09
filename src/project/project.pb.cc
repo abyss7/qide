@@ -24,9 +24,9 @@ namespace {
 const ::google::protobuf::Descriptor* Project_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Project_reflection_ = NULL;
-const ::google::protobuf::Descriptor* Project_Configuration_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* Project_Variant_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  Project_Configuration_reflection_ = NULL;
+  Project_Variant_reflection_ = NULL;
 
 }  // namespace
 
@@ -42,7 +42,7 @@ void protobuf_AssignDesc_project_2fproject_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Project, name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Project, root_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Project, file_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Project, config_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Project, variant_),
   };
   Project_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -55,23 +55,23 @@ void protobuf_AssignDesc_project_2fproject_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(Project));
-  Project_Configuration_descriptor_ = Project_descriptor_->nested_type(0);
-  static const int Project_Configuration_offsets_[3] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Project_Configuration, name_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Project_Configuration, build_dir_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Project_Configuration, target_),
+  Project_Variant_descriptor_ = Project_descriptor_->nested_type(0);
+  static const int Project_Variant_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Project_Variant, name_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Project_Variant, build_dir_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Project_Variant, target_),
   };
-  Project_Configuration_reflection_ =
+  Project_Variant_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
-      Project_Configuration_descriptor_,
-      Project_Configuration::default_instance_,
-      Project_Configuration_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Project_Configuration, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Project_Configuration, _unknown_fields_),
+      Project_Variant_descriptor_,
+      Project_Variant::default_instance_,
+      Project_Variant_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Project_Variant, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Project_Variant, _unknown_fields_),
       -1,
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(Project_Configuration));
+      sizeof(Project_Variant));
 }
 
 namespace {
@@ -87,7 +87,7 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Project_descriptor_, &Project::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    Project_Configuration_descriptor_, &Project_Configuration::default_instance());
+    Project_Variant_descriptor_, &Project_Variant::default_instance());
 }
 
 }  // namespace
@@ -96,9 +96,9 @@ void protobuf_ShutdownFile_project_2fproject_2eproto() {
   delete Project::default_instance_;
   delete Project_reflection_;
   delete Project::_default_root_;
-  delete Project_Configuration::default_instance_;
-  delete Project_Configuration_reflection_;
-  delete Project_Configuration::_default_target_;
+  delete Project_Variant::default_instance_;
+  delete Project_Variant_reflection_;
+  delete Project_Variant::_default_target_;
 }
 
 void protobuf_AddDesc_project_2fproject_2eproto() {
@@ -108,22 +108,22 @@ void protobuf_AddDesc_project_2fproject_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\025project/project.proto\022\tide.proto\"\257\001\n\007P"
+    "\n\025project/project.proto\022\tide.proto\"\244\001\n\007P"
     "roject\022\014\n\004name\030\001 \002(\t\022\017\n\004root\030\002 \001(\t:\001.\022\014\n"
-    "\004file\030\003 \003(\t\0220\n\006config\030\004 \003(\0132 .ide.proto."
-    "Project.Configuration\032E\n\rConfiguration\022\014"
-    "\n\004name\030\001 \002(\t\022\021\n\tbuild_dir\030\002 \002(\t\022\023\n\006targe"
-    "t\030\003 \001(\t:\003all", 212);
+    "\004file\030\003 \003(\t\022+\n\007variant\030\004 \003(\0132\032.ide.proto"
+    ".Project.Variant\032\?\n\007Variant\022\014\n\004name\030\001 \002("
+    "\t\022\021\n\tbuild_dir\030\002 \002(\t\022\023\n\006target\030\003 \001(\t:\003al"
+    "l", 201);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "project/project.proto", &protobuf_RegisterTypes);
   Project::_default_root_ =
       new ::std::string(".", 1);
   Project::default_instance_ = new Project();
-  Project_Configuration::_default_target_ =
+  Project_Variant::_default_target_ =
       new ::std::string("all", 3);
-  Project_Configuration::default_instance_ = new Project_Configuration();
+  Project_Variant::default_instance_ = new Project_Variant();
   Project::default_instance_->InitAsDefaultInstance();
-  Project_Configuration::default_instance_->InitAsDefaultInstance();
+  Project_Variant::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_project_2fproject_2eproto);
 }
 
@@ -136,30 +136,30 @@ struct StaticDescriptorInitializer_project_2fproject_2eproto {
 
 // ===================================================================
 
-::std::string* Project_Configuration::_default_target_ = NULL;
+::std::string* Project_Variant::_default_target_ = NULL;
 #ifndef _MSC_VER
-const int Project_Configuration::kNameFieldNumber;
-const int Project_Configuration::kBuildDirFieldNumber;
-const int Project_Configuration::kTargetFieldNumber;
+const int Project_Variant::kNameFieldNumber;
+const int Project_Variant::kBuildDirFieldNumber;
+const int Project_Variant::kTargetFieldNumber;
 #endif  // !_MSC_VER
 
-Project_Configuration::Project_Configuration()
+Project_Variant::Project_Variant()
   : ::google::protobuf::Message() {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:ide.proto.Project.Configuration)
+  // @@protoc_insertion_point(constructor:ide.proto.Project.Variant)
 }
 
-void Project_Configuration::InitAsDefaultInstance() {
+void Project_Variant::InitAsDefaultInstance() {
 }
 
-Project_Configuration::Project_Configuration(const Project_Configuration& from)
+Project_Variant::Project_Variant(const Project_Variant& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:ide.proto.Project.Configuration)
+  // @@protoc_insertion_point(copy_constructor:ide.proto.Project.Variant)
 }
 
-void Project_Configuration::SharedCtor() {
+void Project_Variant::SharedCtor() {
   ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
   name_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
@@ -168,12 +168,12 @@ void Project_Configuration::SharedCtor() {
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
-Project_Configuration::~Project_Configuration() {
-  // @@protoc_insertion_point(destructor:ide.proto.Project.Configuration)
+Project_Variant::~Project_Variant() {
+  // @@protoc_insertion_point(destructor:ide.proto.Project.Variant)
   SharedDtor();
 }
 
-void Project_Configuration::SharedDtor() {
+void Project_Variant::SharedDtor() {
   if (name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete name_;
   }
@@ -187,28 +187,28 @@ void Project_Configuration::SharedDtor() {
   }
 }
 
-void Project_Configuration::SetCachedSize(int size) const {
+void Project_Variant::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* Project_Configuration::descriptor() {
+const ::google::protobuf::Descriptor* Project_Variant::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return Project_Configuration_descriptor_;
+  return Project_Variant_descriptor_;
 }
 
-const Project_Configuration& Project_Configuration::default_instance() {
+const Project_Variant& Project_Variant::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_project_2fproject_2eproto();
   return *default_instance_;
 }
 
-Project_Configuration* Project_Configuration::default_instance_ = NULL;
+Project_Variant* Project_Variant::default_instance_ = NULL;
 
-Project_Configuration* Project_Configuration::New() const {
-  return new Project_Configuration;
+Project_Variant* Project_Variant::New() const {
+  return new Project_Variant;
 }
 
-void Project_Configuration::Clear() {
+void Project_Variant::Clear() {
   if (_has_bits_[0 / 32] & 7) {
     if (has_name()) {
       if (name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
@@ -230,11 +230,11 @@ void Project_Configuration::Clear() {
   mutable_unknown_fields()->Clear();
 }
 
-bool Project_Configuration::MergePartialFromCodedStream(
+bool Project_Variant::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:ide.proto.Project.Configuration)
+  // @@protoc_insertion_point(parse_start:ide.proto.Project.Variant)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
     tag = p.first;
@@ -304,17 +304,17 @@ bool Project_Configuration::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:ide.proto.Project.Configuration)
+  // @@protoc_insertion_point(parse_success:ide.proto.Project.Variant)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:ide.proto.Project.Configuration)
+  // @@protoc_insertion_point(parse_failure:ide.proto.Project.Variant)
   return false;
 #undef DO_
 }
 
-void Project_Configuration::SerializeWithCachedSizes(
+void Project_Variant::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:ide.proto.Project.Configuration)
+  // @@protoc_insertion_point(serialize_start:ide.proto.Project.Variant)
   // required string name = 1;
   if (has_name()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
@@ -349,12 +349,12 @@ void Project_Configuration::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
-  // @@protoc_insertion_point(serialize_end:ide.proto.Project.Configuration)
+  // @@protoc_insertion_point(serialize_end:ide.proto.Project.Variant)
 }
 
-::google::protobuf::uint8* Project_Configuration::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* Project_Variant::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:ide.proto.Project.Configuration)
+  // @@protoc_insertion_point(serialize_to_array_start:ide.proto.Project.Variant)
   // required string name = 1;
   if (has_name()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
@@ -392,11 +392,11 @@ void Project_Configuration::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:ide.proto.Project.Configuration)
+  // @@protoc_insertion_point(serialize_to_array_end:ide.proto.Project.Variant)
   return target;
 }
 
-int Project_Configuration::ByteSize() const {
+int Project_Variant::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
@@ -433,10 +433,10 @@ int Project_Configuration::ByteSize() const {
   return total_size;
 }
 
-void Project_Configuration::MergeFrom(const ::google::protobuf::Message& from) {
+void Project_Variant::MergeFrom(const ::google::protobuf::Message& from) {
   GOOGLE_CHECK_NE(&from, this);
-  const Project_Configuration* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const Project_Configuration*>(
+  const Project_Variant* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const Project_Variant*>(
       &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -445,7 +445,7 @@ void Project_Configuration::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void Project_Configuration::MergeFrom(const Project_Configuration& from) {
+void Project_Variant::MergeFrom(const Project_Variant& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_name()) {
@@ -461,25 +461,25 @@ void Project_Configuration::MergeFrom(const Project_Configuration& from) {
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
-void Project_Configuration::CopyFrom(const ::google::protobuf::Message& from) {
+void Project_Variant::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void Project_Configuration::CopyFrom(const Project_Configuration& from) {
+void Project_Variant::CopyFrom(const Project_Variant& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool Project_Configuration::IsInitialized() const {
+bool Project_Variant::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
 
   return true;
 }
 
-void Project_Configuration::Swap(Project_Configuration* other) {
+void Project_Variant::Swap(Project_Variant* other) {
   if (other != this) {
     std::swap(name_, other->name_);
     std::swap(build_dir_, other->build_dir_);
@@ -490,11 +490,11 @@ void Project_Configuration::Swap(Project_Configuration* other) {
   }
 }
 
-::google::protobuf::Metadata Project_Configuration::GetMetadata() const {
+::google::protobuf::Metadata Project_Variant::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = Project_Configuration_descriptor_;
-  metadata.reflection = Project_Configuration_reflection_;
+  metadata.descriptor = Project_Variant_descriptor_;
+  metadata.reflection = Project_Variant_reflection_;
   return metadata;
 }
 
@@ -506,7 +506,7 @@ void Project_Configuration::Swap(Project_Configuration* other) {
 const int Project::kNameFieldNumber;
 const int Project::kRootFieldNumber;
 const int Project::kFileFieldNumber;
-const int Project::kConfigFieldNumber;
+const int Project::kVariantFieldNumber;
 #endif  // !_MSC_VER
 
 Project::Project()
@@ -584,7 +584,7 @@ void Project::Clear() {
     }
   }
   file_.Clear();
-  config_.Clear();
+  variant_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
@@ -647,20 +647,20 @@ bool Project::MergePartialFromCodedStream(
           goto handle_unusual;
         }
         if (input->ExpectTag(26)) goto parse_file;
-        if (input->ExpectTag(34)) goto parse_config;
+        if (input->ExpectTag(34)) goto parse_variant;
         break;
       }
 
-      // repeated .ide.proto.Project.Configuration config = 4;
+      // repeated .ide.proto.Project.Variant variant = 4;
       case 4: {
         if (tag == 34) {
-         parse_config:
+         parse_variant:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-                input, add_config()));
+                input, add_variant()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(34)) goto parse_config;
+        if (input->ExpectTag(34)) goto parse_variant;
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -720,10 +720,10 @@ void Project::SerializeWithCachedSizes(
       3, this->file(i), output);
   }
 
-  // repeated .ide.proto.Project.Configuration config = 4;
-  for (int i = 0; i < this->config_size(); i++) {
+  // repeated .ide.proto.Project.Variant variant = 4;
+  for (int i = 0; i < this->variant_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      4, this->config(i), output);
+      4, this->variant(i), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -768,11 +768,11 @@ void Project::SerializeWithCachedSizes(
       WriteStringToArray(3, this->file(i), target);
   }
 
-  // repeated .ide.proto.Project.Configuration config = 4;
-  for (int i = 0; i < this->config_size(); i++) {
+  // repeated .ide.proto.Project.Variant variant = 4;
+  for (int i = 0; i < this->variant_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
-        4, this->config(i), target);
+        4, this->variant(i), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -809,12 +809,12 @@ int Project::ByteSize() const {
       this->file(i));
   }
 
-  // repeated .ide.proto.Project.Configuration config = 4;
-  total_size += 1 * this->config_size();
-  for (int i = 0; i < this->config_size(); i++) {
+  // repeated .ide.proto.Project.Variant variant = 4;
+  total_size += 1 * this->variant_size();
+  for (int i = 0; i < this->variant_size(); i++) {
     total_size +=
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->config(i));
+        this->variant(i));
   }
 
   if (!unknown_fields().empty()) {
@@ -843,7 +843,7 @@ void Project::MergeFrom(const ::google::protobuf::Message& from) {
 void Project::MergeFrom(const Project& from) {
   GOOGLE_CHECK_NE(&from, this);
   file_.MergeFrom(from.file_);
-  config_.MergeFrom(from.config_);
+  variant_.MergeFrom(from.variant_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_name()) {
       set_name(from.name());
@@ -870,7 +870,7 @@ void Project::CopyFrom(const Project& from) {
 bool Project::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
 
-  if (!::google::protobuf::internal::AllAreInitialized(this->config())) return false;
+  if (!::google::protobuf::internal::AllAreInitialized(this->variant())) return false;
   return true;
 }
 
@@ -879,7 +879,7 @@ void Project::Swap(Project* other) {
     std::swap(name_, other->name_);
     std::swap(root_, other->root_);
     file_.Swap(&other->file_);
-    config_.Swap(&other->config_);
+    variant_.Swap(&other->variant_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

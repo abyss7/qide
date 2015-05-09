@@ -7,14 +7,10 @@ build/toolchain/linux/BUILD.gn
 build/pkg-config.py
 build/qt-uic.py
 build/version.py
-src/project/base_project.h
 src/project/BUILD.gn
-src/project/file_iterator.h
 src/project/project.pb.cc
 src/project/project.pb.h
 src/project/project.proto
-src/project/simple_project.cc
-src/project/simple_project.h
 src/ui/BUILD.gn
 src/ui/code_editor.cc
 src/ui/code_editor.h
@@ -80,3 +76,4 @@ src/third_party/ninja/ninja.h
 src/third_party/ninja/ninja.cc
 src/project/clang_index.h
 src/project/clang_index.cc
+src/base/alias.h

@@ -21,32 +21,22 @@ void ProjectTree::OpenProject(ide::NinjaProject* project) {
   addTopLevelItem(root_item);
   sortByColumn(0, Qt::AscendingOrder);
 
-  for (const auto& path : *project_) {
-    ShowFile(path, false);
-  }
-
-  for (auto it = project_->temporary_begin(), end = project_->temporary_end();
-       it != end; ++it) {
-    ShowFile(*it, true);
+  for (auto it = project_->begin(), end = project_->end(); it != end; ++it) {
+    ShowFile(*it, it.IsTemporary());
   }
 }
 
-void ProjectTree::SwitchConfiguration(unsigned index) {
+void ProjectTree::SwitchVariant(unsigned index) {
   clear();
 
-  project_->SwitchConfiguration(index);
+  project_->SwitchVariant(index);
 
   auto* root_item = new FolderTreeItem(project_->GetRoot());
   addTopLevelItem(root_item);
   sortByColumn(0, Qt::AscendingOrder);
 
-  for (const auto& path : *project_) {
-    ShowFile(path, false);
-  }
-
-  for (auto it = project_->temporary_begin(), end = project_->temporary_end();
-       it != end; ++it) {
-    ShowFile(*it, true);
+  for (auto it = project_->begin(), end = project_->end(); it != end; ++it) {
+    ShowFile(*it, it.IsTemporary());
   }
 }
 
@@ -78,6 +68,7 @@ void ProjectTree::AddExistingFile() {
   }
 
   if (project_->AddFile(file_name, false)) {
+    file_name = file_name.mid(project_->GetRoot().size() + 1);
     ShowFile(file_name, false);
   }
 }
@@ -86,7 +77,8 @@ void ProjectTree::RemoveFile() {
   Q_ASSERT(selectedItems().front()->type() == FileTreeItem::Type);
 
   auto* item = selectedItems().front();
-  project_->RemoveFile(static_cast<FileTreeItem*>(item)->FullPath());
+  itemActivated(nullptr, 0);
+  project_->RemoveFile(static_cast<FileTreeItem*>(item)->RelativePath());
   item->parent()->removeChild(item);
   // TODO: also remove all empty parent folders.
   delete item;

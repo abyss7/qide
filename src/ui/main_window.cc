@@ -7,6 +7,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
+#include <iostream>
+
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
   ui_.setupUi(this);
   ui_.splitter->setStretchFactor(0, 1);
@@ -64,8 +66,8 @@ void MainWindow::OpenProject() {
     ui_.codeEditor->setEnabled(false);
     ui_.actionClose->setEnabled(true);
 
-    for (auto i = 0u; i < new_project->ConfigurationSize(); ++i) {
-      ui_.configurationBox->addItem(new_project->GetConfigurationName(i));
+    for (auto i = 0u; i < new_project->VariantSize(); ++i) {
+      ui_.configurationBox->addItem(new_project->GetVariantName(i));
     }
     ui_.configurationBox->setCurrentIndex(0);
   } catch (std::exception& e) {
@@ -74,7 +76,7 @@ void MainWindow::OpenProject() {
   }
 }
 
-void MainWindow::SwitchConfiguration(int index) {
+void MainWindow::SwitchVariant(int index) {
   if (index == -1) {
     return;
   }
@@ -83,7 +85,7 @@ void MainWindow::SwitchConfiguration(int index) {
   ui_.buttonRemoveFile->setEnabled(false);
   ui_.buttonSaveFile->setEnabled(false);
 
-  ui_.projectTree->SwitchConfiguration(static_cast<unsigned>(index));
+  ui_.projectTree->SwitchVariant(static_cast<unsigned>(index));
 }
 
 void MainWindow::CloseProject() {
@@ -96,14 +98,19 @@ void MainWindow::CloseProject() {
   ui_.configurationBox->clear();
 }
 
-void MainWindow::SelectFile(QTreeWidgetItem* item, int) {
+void MainWindow::SelectFile(QTreeWidgetItem* item, QTreeWidgetItem*) {
   ui_.buttonRemoveFile->setEnabled(
-      item->type() == FileTreeItem::Type &&
+      item && item->type() == FileTreeItem::Type &&
       !static_cast<FileTreeItem*>(item)->temporary);
 }
 
 void MainWindow::OpenFile(QTreeWidgetItem* item, int) {
-  if (!item || item->type() != FileTreeItem::Type) {
+  if (!item) {
+    ui_.codeEditor->CloseFile();
+    return;
+  }
+
+  if (item->type() != FileTreeItem::Type) {
     return;
   }
 

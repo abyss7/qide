@@ -13,9 +13,9 @@ class MainWindow : public QMainWindow {
  public slots:
   void NewProject();
   void OpenProject();
-  void SwitchConfiguration(int index);
+  void SwitchVariant(int index);
   void CloseProject();
-  void SelectFile(QTreeWidgetItem* item, int column);
+  void SelectFile(QTreeWidgetItem* item, QTreeWidgetItem* previous_item);
   void OpenFile(QTreeWidgetItem* item, int column);
 
  private:

@@ -24,6 +24,17 @@ QString FileTreeItem::FullPath() const {
   return full_path;
 }
 
+QString FileTreeItem::RelativePath() const {
+  QString full_path = text(0);
+  const QTreeWidgetItem* item = this;
+  while (item->parent()->parent()) {
+    item = item->parent();
+    full_path = item->text(0) + QDir::separator() + full_path;
+  }
+
+  return full_path;
+}
+
 bool FileTreeItem::operator<(const QTreeWidgetItem& other) const {
   if (treeWidget()->sortColumn() == 0 && other.type() != Type) {
     return false;

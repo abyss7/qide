@@ -14,7 +14,7 @@ class ProjectTree : public QTreeWidget {
   explicit ProjectTree(QWidget* parent = nullptr);
 
   void OpenProject(ide::NinjaProject* project);
-  void SwitchConfiguration(unsigned index);
+  void SwitchVariant(unsigned index);
   void CloseProject();
 
  public slots:

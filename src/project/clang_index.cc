@@ -4,14 +4,14 @@ namespace ide {
 
 namespace {
 
-using UserData = QPair<QString, ClangIndex::VisitorFn>;
+using UserData = Pair<String, ClangIndex::VisitorFn>;
 
-std::string get_clang_string(CXString str) {
+String get_clang_string(CXString str) {
   const char* tmp = clang_getCString(str);
   if (tmp == NULL) {
     return "";
   } else {
-    std::string translated = std::string(tmp);
+    String translated(tmp);
     clang_disposeString(str);
     return translated;
   }
@@ -22,16 +22,13 @@ CXChildVisitResult visitor_helper(CXCursor cursor, CXCursor parent,
   auto& user_data = *reinterpret_cast<UserData*>(client_data);
 
   CXFile file;
-  unsigned int line;
-  unsigned int column;
-  unsigned int offset;
+  ui32 line, column, offset;
 
-  CXSourceLocation loc = clang_getCursorLocation(cursor);
-  clang_getFileLocation(loc, &file, &line, &column, &offset);
+  CXSourceLocation location = clang_getCursorLocation(cursor);
+  clang_getFileLocation(location, &file, &line, &column, &offset);
 
   // Only interested in highlighting tokens in selected file.
-  if (QString::fromStdString(get_clang_string(clang_getFileName(file))) !=
-      user_data.first) {
+  if (get_clang_string(clang_getFileName(file)) != user_data.first) {
     return CXChildVisit_Continue;
   }
 
@@ -39,11 +36,11 @@ CXChildVisitResult visitor_helper(CXCursor cursor, CXCursor parent,
   CXSourceRange range = clang_getCursorExtent(cursor);
 
   CXToken* tokens;
-  unsigned int tokens_size;
+  ui32 tokens_size;
   clang_tokenize(tu, range, &tokens, &tokens_size);
 
   if (tokens_size > 0) {
-    for (unsigned int i = 0; i < tokens_size - 1; i++) {
+    for (auto i = 0u; i < tokens_size - 1; i++) {
       auto token = get_clang_string(clang_getTokenSpelling(tu, tokens[i]));
       CXSourceLocation tl = clang_getTokenLocation(tu, tokens[i]);
 
@@ -66,7 +63,7 @@ ClangIndex::~ClangIndex() {
   clang_disposeIndex(index_);
 }
 
-void ClangIndex::Parse(const QString& path, const QStringList& args) {
+void ClangIndex::Parse(const String& path, const StringList& args) {
   if (units_.contains(path)) {
     return;
   }
@@ -81,7 +78,7 @@ void ClangIndex::Parse(const QString& path, const QStringList& args) {
                           nullptr, 0, CXTranslationUnit_None));
 }
 
-void ClangIndex::Visit(const QString& path, VisitorFn visitor) {
+void ClangIndex::Visit(const String& path, VisitorFn visitor) {
   if (!units_.contains(path)) {
     return;
   }
