@@ -21,9 +21,11 @@ void ProjectTree::OpenProject(ide::NinjaProject* project) {
   addTopLevelItem(root_item);
   sortByColumn(0, Qt::AscendingOrder);
 
+  setSortingEnabled(false);
   for (auto it = project_->begin(), end = project_->end(); it != end; ++it) {
     ShowFile(*it, it.IsTemporary());
   }
+  setSortingEnabled(true);
 }
 
 void ProjectTree::SwitchVariant(unsigned index) {
@@ -35,9 +37,11 @@ void ProjectTree::SwitchVariant(unsigned index) {
   addTopLevelItem(root_item);
   sortByColumn(0, Qt::AscendingOrder);
 
+  setSortingEnabled(false);
   for (auto it = project_->begin(), end = project_->end(); it != end; ++it) {
     ShowFile(*it, it.IsTemporary());
   }
+  setSortingEnabled(true);
 }
 
 void ProjectTree::CloseProject() {
