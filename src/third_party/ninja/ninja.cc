@@ -17,17 +17,11 @@ struct RealFileReader : public ManifestParser::FileReader {
 
 }  // namespace
 
-Ninja::Ninja(const QString& build_dir)
-    : build_dir_(build_dir), previous_dir_(QDir::currentPath()) {
-  QDir::setCurrent(build_dir);
+Ninja::Ninja(const QString& build_dir) : build_dir_(build_dir) {
 }
 
-Ninja::~Ninja() {
-  QDir::setCurrent(previous_dir_);
-}
-
-QStringList Ninja::QueryAllInputs(const std::string& target) {
-  QStringList results;
+Ninja::InputList Ninja::QueryAllInputs(const std::string& target) {
+  InputList results;
 
   string err;
   RealFileReader file_reader;
@@ -48,12 +42,14 @@ QStringList Ninja::QueryAllInputs(const std::string& target) {
     }
     visited_nodes.insert(node);
 
-    auto handle_edge = [this, &pending_nodes, &results](const Edge* edge) {
+    auto handle_edge = [this, &pending_nodes, &results](Edge* edge) {
       if (edge != nullptr) {
         if (edge->rule_->name() == "cxx") {
           for (const auto* input : edge->inputs_) {
-            results.push_back(build_dir() + QDir::separator() +
-                              QString::fromStdString(input->path()));
+            results.push_back(qMakePair(
+                build_dir() + QDir::separator() +
+                    QString::fromStdString(input->path()),
+                QString::fromStdString(edge->EvaluateCommand()).split(' ')));
           }
         }
         for (auto* node : edge->inputs_) {
@@ -65,7 +61,7 @@ QStringList Ninja::QueryAllInputs(const std::string& target) {
     handle_edge(node->in_edge());
 
     auto edges = node->out_edges();
-    for (const auto* edge : edges) {
+    for (auto* edge : edges) {
       handle_edge(edge);
     }
   }

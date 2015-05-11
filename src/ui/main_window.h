@@ -4,6 +4,9 @@
 
 #include <QMainWindow>
 
+namespace ide {
+namespace ui {
+
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
@@ -16,8 +19,10 @@ class MainWindow : public QMainWindow {
   void SwitchVariant(int index);
   void CloseProject();
   void SelectFile(QTreeWidgetItem* item, QTreeWidgetItem* previous_item);
-  void OpenFile(QTreeWidgetItem* item, int column);
 
  private:
   Ui::MainWindow ui_;
 };
+
+}  // namespace ui
+}  // namespace ide

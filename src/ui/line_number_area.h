@@ -2,6 +2,9 @@
 
 #include <QWidget>
 
+namespace ide {
+namespace ui {
+
 class CodeEditor;
 
 class LineNumberArea : public QWidget {
@@ -16,3 +19,6 @@ class LineNumberArea : public QWidget {
 
   CodeEditor* code_editor_;
 };
+
+}  // namespace ui
+}  // namespace ide

@@ -6,14 +6,15 @@
 
 class Ninja {
  public:
+  using InputList = QList<QPair<QString, QStringList>>;
+
   explicit Ninja(const QString& build_dir);
-  ~Ninja();
 
   inline const QString& build_dir() const { return build_dir_; }
 
-  QStringList QueryAllInputs(const std::string& target);
+  InputList QueryAllInputs(const std::string& target);
 
  private:
-  const QString build_dir_, previous_dir_;
+  const QString build_dir_;
   State state_;
 };

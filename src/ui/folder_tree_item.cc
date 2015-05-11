@@ -2,12 +2,15 @@
 
 #include <QDir>
 
-FolderTreeItem::FolderTreeItem(const QString& path) : QTreeWidgetItem(Type) {
+namespace ide {
+namespace ui {
+
+FolderTreeItem::FolderTreeItem(const String& path) : QTreeWidgetItem(Type) {
   setText(0, path);
   setIcon(0, QIcon::fromTheme("folder"));
 }
 
-FolderTreeItem* FolderTreeItem::AddSubfolder(const QString& name) {
+FolderTreeItem* FolderTreeItem::AddSubfolder(const String& name) {
   auto it = subfolders_.find(name);
   if (it != subfolders_.end()) {
     return it.value();
@@ -19,8 +22,8 @@ FolderTreeItem* FolderTreeItem::AddSubfolder(const QString& name) {
   return item;
 }
 
-QString FolderTreeItem::FullPath() const {
-  QString full_path = text(0);
+String FolderTreeItem::FullPath() const {
+  String full_path = text(0);
   const QTreeWidgetItem* item = this;
   while (item->parent()) {
     item = item->parent();
@@ -38,3 +41,6 @@ bool FolderTreeItem::operator<(const QTreeWidgetItem& other) const {
   // FIXME: not reached.
   return QTreeWidgetItem::operator<(other);
 }
+
+}  // namespace ui
+}  // namespace ide

@@ -5,6 +5,9 @@
 #include <QPainter>
 #include <QTextBlock>
 
+namespace ide {
+namespace ui {
+
 LineNumberArea::LineNumberArea(CodeEditor* editor)
     : QWidget(editor), code_editor_(editor) {
 }
@@ -39,7 +42,7 @@ void LineNumberArea::paintEvent(QPaintEvent* event) {
   int bottom = top + code_editor_->blockBoundingRect(block).height();
   while (block.isValid() && top <= event->rect().bottom()) {
     if (block.isVisible() && bottom >= event->rect().top()) {
-      QString number = QString::number(blockNumber + 1);
+      String number = QString::number(blockNumber + 1);
       painter.setPen(Qt::black);
       painter.drawText(0, top, width() - 7,
                        code_editor_->fontMetrics().height(), Qt::AlignRight,
@@ -52,3 +55,6 @@ void LineNumberArea::paintEvent(QPaintEvent* event) {
     ++blockNumber;
   }
 }
+
+}  // namespace ui
+}  // namespace ide

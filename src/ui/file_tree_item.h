@@ -1,15 +1,28 @@
 #pragma once
 
+#include <base/alias.h>
+
 #include <QTreeWidgetItem>
+
+#include <clang-c/Index.h>
+
+namespace ide {
+namespace ui {
 
 class FileTreeItem : public QTreeWidgetItem {
  public:
   enum { Type = UserType + 2 };
 
-  explicit FileTreeItem(const QString& name, bool temporary);
+  using VisitorFn = Fn<void(ui32 line, ui32 column, ui32 length, CXTokenKind)>;
 
-  QString FullPath() const;
-  QString RelativePath() const;
+  explicit FileTreeItem(const String& name, const StringList& args,
+                        bool temporary);
+  ~FileTreeItem();
+
+  String FullPath() const;
+  String RelativePath() const;
+
+  void Visit(VisitorFn visitor);
 
   inline void SetFontBold(bool bold) {
     auto tmp_font = font(0);
@@ -20,4 +33,12 @@ class FileTreeItem : public QTreeWidgetItem {
   bool operator<(const QTreeWidgetItem& other) const override;
 
   const bool temporary;
+
+ private:
+  List<std::string> args_;
+  CXIndex index_ = clang_createIndex(0, 0);
+  CXTranslationUnit unit_;
 };
+
+}  // namespace ui
+}  // namespace ide

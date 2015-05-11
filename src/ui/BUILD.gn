@@ -31,4 +31,6 @@ shared_library("ui") {
     "//src/project:project",
     ":main_window",
   ]
+
+  libs = [ "clang" ]
 }

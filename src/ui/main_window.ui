@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
+ <class>ide::ui::MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
   <property name="geometry">
    <rect>
@@ -413,6 +413,7 @@
     <slot>UpdateLineNumberArea(QRect,int)</slot>
     <slot>HighlightCurrentLine()</slot>
     <slot>SaveFile()</slot>
+    <slot>OpenFile(QTreeWidgetItem*,int)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -543,7 +544,7 @@
   <connection>
    <sender>projectTree</sender>
    <signal>itemActivated(QTreeWidgetItem*,int)</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>codeEditor</receiver>
    <slot>OpenFile(QTreeWidgetItem*,int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -551,8 +552,8 @@
      <y>334</y>
     </hint>
     <hint type="destinationlabel">
-     <x>563</x>
-     <y>312</y>
+     <x>731</x>
+     <y>346</y>
     </hint>
    </hints>
   </connection>
@@ -673,7 +674,6 @@
   <slot>OpenProject()</slot>
   <slot>CloseProject()</slot>
   <slot>SelectFile(QTreeWidgetItem*,QTreeWidgetItem*)</slot>
-  <slot>OpenFile(QTreeWidgetItem*,int)</slot>
   <slot>NewProject()</slot>
   <slot>SwitchVariant(int)</slot>
  </slots>

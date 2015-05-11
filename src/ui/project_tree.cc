@@ -6,10 +6,13 @@
 #include <QFileDialog>
 #include <QHeaderView>
 
+namespace ide {
+namespace ui {
+
 ProjectTree::ProjectTree(QWidget* parent) : QTreeWidget(parent) {
 }
 
-void ProjectTree::OpenProject(ide::NinjaProject* project) {
+void ProjectTree::OpenProject(NinjaProject* project) {
   Q_ASSERT(project);
   Q_ASSERT(!project_);
 
@@ -23,12 +26,12 @@ void ProjectTree::OpenProject(ide::NinjaProject* project) {
 
   setSortingEnabled(false);
   for (auto it = project_->begin(), end = project_->end(); it != end; ++it) {
-    ShowFile(*it, it.IsTemporary());
+    ShowFile(it);
   }
   setSortingEnabled(true);
 }
 
-void ProjectTree::SwitchVariant(unsigned index) {
+void ProjectTree::SwitchVariant(ui32 index) {
   clear();
 
   project_->SwitchVariant(index);
@@ -39,7 +42,7 @@ void ProjectTree::SwitchVariant(unsigned index) {
 
   setSortingEnabled(false);
   for (auto it = project_->begin(), end = project_->end(); it != end; ++it) {
-    ShowFile(*it, it.IsTemporary());
+    ShowFile(it);
   }
   setSortingEnabled(true);
 }
@@ -55,7 +58,7 @@ void ProjectTree::AddNewFile() {
 }
 
 void ProjectTree::AddExistingFile() {
-  QString dialog_path = project_->GetRoot();
+  String dialog_path = project_->GetRoot();
 
   if (!selectedItems().empty()) {
     const auto* item = selectedItems().front();
@@ -64,16 +67,17 @@ void ProjectTree::AddExistingFile() {
     }
     dialog_path = static_cast<const FolderTreeItem*>(item)->FullPath();
   }
-  QString file_name = QFileDialog::getOpenFileName(
+  String file_name = QFileDialog::getOpenFileName(
       this, "Add File To Project", dialog_path, "All files (*.*)", 0,
       QFileDialog::HideNameFilterDetails);
   if (file_name.isEmpty()) {
     return;
   }
 
-  if (project_->AddFile(file_name, false)) {
+  auto it = project_->AddFile(file_name);
+  if (it != project_->end()) {
     file_name = file_name.mid(project_->GetRoot().size() + 1);
-    ShowFile(file_name, false);
+    ShowFile(it);
   }
 }
 
@@ -88,10 +92,12 @@ void ProjectTree::RemoveFile() {
   delete item;
 }
 
-void ProjectTree::ShowFile(const QString& rootless_file_name, bool temporary) {
-  Q_ASSERT(!QDir::isAbsolutePath(rootless_file_name));
+void ProjectTree::ShowFile(NinjaProject::Iterator file) {
+  const auto& file_path = *file;
 
-  auto path_elements = rootless_file_name.split(QDir::separator());
+  Q_ASSERT(!QDir::isAbsolutePath(file_path));
+
+  auto path_elements = file_path.split(QDir::separator());
   auto file_name = path_elements.back();
   path_elements.pop_back();
 
@@ -100,5 +106,9 @@ void ProjectTree::ShowFile(const QString& rootless_file_name, bool temporary) {
     folder_item = folder_item->AddSubfolder(path);
   }
 
-  folder_item->addChild(new FileTreeItem(file_name, temporary));
+  folder_item->addChild(
+      new FileTreeItem(file_name, file.GetCommand(), file.IsTemporary()));
 }
+
+}  // namespace ui
+}  // namespace ide

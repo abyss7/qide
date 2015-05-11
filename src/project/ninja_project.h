@@ -8,7 +8,7 @@ namespace ide {
 class NinjaProject {
  public:
   using PersistentFiles = HashMap<String, int>;
-  using TemporaryFiles = Set<String>;
+  using TemporaryFiles = HashMap<String, StringList>;
 
   class Iterator {
    public:
@@ -25,6 +25,7 @@ class NinjaProject {
     bool operator!=(const Iterator& other) const;
 
     inline bool IsTemporary() const { return temp_; }
+    StringList GetCommand() const;
 
    private:
     PersistentFiles::const_iterator pers_begin_, pers_end_;
@@ -37,7 +38,7 @@ class NinjaProject {
   inline String GetName() const { return StdToStr(config_.name()); }
   inline const String& GetRoot() const { return root_path_; }
 
-  bool AddFile(String file_path, bool temporary);
+  Iterator AddFile(String file_path);
   void RemoveFile(const String& file_path);
 
   inline Iterator begin() const {
@@ -55,6 +56,7 @@ class NinjaProject {
   void SwitchVariant(ui32 index);
 
  private:
+  bool AddTemporaryFile(String file_path, const StringList& command);
   void RemoveFile(int file_index);
   void FlushOnDisk() const;
 

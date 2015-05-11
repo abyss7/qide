@@ -44,7 +44,7 @@ NinjaProject::Iterator& NinjaProject::Iterator::operator++() {
 
 const String& NinjaProject::Iterator::operator*() const {
   if (temp_) {
-    return *temp_begin_;
+    return temp_begin_.key();
   } else {
     return pers_begin_.key();
   }
@@ -60,6 +60,14 @@ bool NinjaProject::Iterator::operator!=(const Iterator& other) const {
   } else {
     return pers_begin_ != other.pers_begin_;
   }
+}
+
+StringList NinjaProject::Iterator::GetCommand() const {
+  if (temp_) {
+    return temp_begin_.value();
+  }
+
+  return {};
 }
 
 NinjaProject::NinjaProject(const String& project_file, ui32 default_variant)
@@ -92,42 +100,29 @@ NinjaProject::NinjaProject(const String& project_file, ui32 default_variant)
   SwitchVariant(default_variant);
 }
 
-bool NinjaProject::AddFile(String file_path, bool temporary) {
+NinjaProject::Iterator NinjaProject::AddFile(String file_path) {
   Q_ASSERT(QDir::isAbsolutePath(file_path));
   Q_ASSERT(QFile::exists(file_path));
 
   file_path = QDir::cleanPath(file_path);
   if (!file_path.startsWith(root_path_)) {
-    return false;
+    return end();
   }
 
   // Truncate leading |root_path_|.
   file_path = file_path.mid(root_path_.size() + 1);
 
-  if (temporary) {
-    auto it = persistent_files_.find(file_path);
-    if (it != persistent_files_.end()) {
-      persistent_files_.erase(it);
-      RemoveFile(it.value());
-    }
-
-    if (temporary_files_.contains(file_path)) {
-      return false;
-    }
-
-    temporary_files_.insert(file_path);
-  } else {
-    if (temporary_files_.contains(file_path) ||
-        persistent_files_.contains(file_path)) {
-      return false;
-    }
-
-    config_.add_file()->assign(file_path.toStdString());
-    persistent_files_.insert(file_path, config_.file_size() - 1);
-    FlushOnDisk();
+  if (temporary_files_.contains(file_path) ||
+      persistent_files_.contains(file_path)) {
+    return end();
   }
 
-  return true;
+  config_.add_file()->assign(file_path.toStdString());
+  auto it = persistent_files_.insert(file_path, config_.file_size() - 1);
+  FlushOnDisk();
+
+  return Iterator(it, persistent_files_.end(), temporary_files_.begin(),
+                  temporary_files_.end());
 }
 
 void NinjaProject::RemoveFile(const String& file_path) {
@@ -140,17 +135,46 @@ void NinjaProject::SwitchVariant(ui32 index) {
   if (index >= static_cast<ui32>(config_.variant_size())) {
     throw std::runtime_error("Trying to switch to non-existent variant!");
   }
+
   const auto& config = config_.variant(index);
   auto build_dir = GetRoot() + QDir::separator() + StdToStr(config.build_dir());
   Ninja ninja(build_dir);
+  QDir::setCurrent(build_dir);
 
   auto inputs = ninja.QueryAllInputs(config.target());
   for (const auto& input : inputs) {
     // We need to filter out the generated files.
-    if (QFile::exists(input)) {
-      AddFile(input, true);
+    if (QFile::exists(input.first)) {
+      AddTemporaryFile(input.first, input.second);
     }
   }
+}
+
+bool NinjaProject::AddTemporaryFile(String file_path,
+                                    const StringList& command) {
+  Q_ASSERT(QDir::isAbsolutePath(file_path));
+  Q_ASSERT(QFile::exists(file_path));
+
+  file_path = QDir::cleanPath(file_path);
+  if (!file_path.startsWith(root_path_)) {
+    return false;
+  }
+
+  // Truncate leading |root_path_|.
+  file_path = file_path.mid(root_path_.size() + 1);
+  auto it = persistent_files_.find(file_path);
+  if (it != persistent_files_.end()) {
+    persistent_files_.erase(it);
+    RemoveFile(it.value());
+  }
+
+  if (temporary_files_.contains(file_path)) {
+    return false;
+  }
+
+  temporary_files_.insert(file_path, command);
+
+  return true;
 }
 
 void NinjaProject::RemoveFile(int file_index) {

@@ -5,7 +5,8 @@
 #include <QMenu>
 #include <QTreeWidget>
 
-#include <memory>
+namespace ide {
+namespace ui {
 
 class ProjectTree : public QTreeWidget {
   Q_OBJECT
@@ -13,8 +14,8 @@ class ProjectTree : public QTreeWidget {
  public:
   explicit ProjectTree(QWidget* parent = nullptr);
 
-  void OpenProject(ide::NinjaProject* project);
-  void SwitchVariant(unsigned index);
+  void OpenProject(NinjaProject* project);
+  void SwitchVariant(ui32 index);
   void CloseProject();
 
  public slots:
@@ -23,7 +24,10 @@ class ProjectTree : public QTreeWidget {
   void RemoveFile();
 
  private:
-  void ShowFile(const QString& rootless_file_name, bool temporary);
+  void ShowFile(NinjaProject::Iterator file);
 
-  std::unique_ptr<ide::NinjaProject> project_;
+  UniquePtr<NinjaProject> project_;
 };
+
+}  // namespace ui
+}  // namespace ide

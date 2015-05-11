@@ -74,6 +74,4 @@ src/third_party/ninja/exported/src/version.cc
 src/third_party/ninja/exported/src/version.h
 src/third_party/ninja/ninja.h
 src/third_party/ninja/ninja.cc
-src/project/clang_index.h
-src/project/clang_index.cc
 src/base/alias.h

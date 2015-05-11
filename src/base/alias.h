@@ -25,6 +25,9 @@ using Fn = std::function<Signature>;
 template <class U, class V>
 using HashMap = QHash<U, V>;
 
+template <class T>
+using List = QList<T>;
+
 template <class U, class V>
 using Pair = QPair<U, V>;
 

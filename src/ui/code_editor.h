@@ -1,13 +1,14 @@
 #pragma once
 
+#include <base/alias.h>
+
+#include <ui/file_tree_item.h>
 #include <ui/line_number_area.h>
 
 #include <QPlainTextEdit>
 
-#include <memory>
-
-class FileTreeItem;
-class QTreeWidgetItem;
+namespace ide {
+namespace ui {
 
 class CodeEditor : public QPlainTextEdit {
   Q_OBJECT
@@ -15,11 +16,11 @@ class CodeEditor : public QPlainTextEdit {
  public:
   explicit CodeEditor(QWidget* parent = nullptr);
 
-  QString CurrentFilePath() const;
-  bool OpenFile(FileTreeItem* item);
+  String CurrentFilePath() const;
   void CloseFile();
 
  public slots:
+  void OpenFile(QTreeWidgetItem* item, int column);
   void SaveFile();
 
  protected:
@@ -28,11 +29,17 @@ class CodeEditor : public QPlainTextEdit {
  private:
   friend class LineNumberArea;
 
+  void HighlightToken(ui32 line, ui32 column, ui32 length, CXTokenKind kind);
+  bool OpenFile(FileTreeItem* item);
+
   FileTreeItem* current_item_ = nullptr;
-  std::unique_ptr<LineNumberArea> line_number_area_;
+  UniquePtr<LineNumberArea> line_number_area_;
 
  private slots:
   void HighlightCurrentLine();
   void UpdateLineNumberArea(const QRect& rect, int dy);
   void UpdateLineNumberAreaWidth(int);
 };
+
+}  // namespace ui
+}  // namespace ide

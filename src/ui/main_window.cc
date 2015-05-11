@@ -7,7 +7,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
-#include <iostream>
+namespace ide {
+namespace ui {
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
   ui_.setupUi(this);
@@ -104,15 +105,5 @@ void MainWindow::SelectFile(QTreeWidgetItem* item, QTreeWidgetItem*) {
       !static_cast<FileTreeItem*>(item)->temporary);
 }
 
-void MainWindow::OpenFile(QTreeWidgetItem* item, int) {
-  if (!item) {
-    ui_.codeEditor->CloseFile();
-    return;
-  }
-
-  if (item->type() != FileTreeItem::Type) {
-    return;
-  }
-
-  ui_.codeEditor->OpenFile(static_cast<FileTreeItem*>(item));
-}
+}  // namespace ui
+}  // namespace ide
