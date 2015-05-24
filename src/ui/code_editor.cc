@@ -6,6 +6,8 @@
 #include <QMessageBox>
 #include <QPalette>
 
+#include <iostream>
+
 namespace ide {
 namespace ui {
 
@@ -31,6 +33,7 @@ void CodeEditor::CloseFile() {
   }
 
   setEnabled(false);
+  setExtraSelections({});
 }
 
 void CodeEditor::OpenFile(QTreeWidgetItem* item, int) {
@@ -82,7 +85,11 @@ void CodeEditor::HighlightToken(ui32 line, ui32 column, ui32 length,
 
   switch (kind) {
     case CXToken_Comment: {
-      color = QColor("blue");
+      color = QColor("darkBlue");
+    } break;
+
+    case CXToken_Keyword: {
+      color = QColor("yellow");
     } break;
 
     default:
@@ -118,11 +125,12 @@ bool CodeEditor::OpenFile(FileTreeItem* item) {
 
   setPlainText(file.readAll());
   setEnabled(true);
-  HighlightCurrentLine();
   current_item_->Visit(
       [this](ui32 line, ui32 column, ui32 length, CXTokenKind kind) {
         HighlightToken(line, column, length, kind);
       });
+  textCursor().setPosition(0);
+  HighlightCurrentLine();
 
   modificationChanged(false);
 

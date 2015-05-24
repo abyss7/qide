@@ -3,6 +3,7 @@
 #include <project/ninja_project.h>
 
 #include <QMenu>
+#include <QProgressBar>
 #include <QTreeWidget>
 
 namespace ide {
@@ -14,8 +15,8 @@ class ProjectTree : public QTreeWidget {
  public:
   explicit ProjectTree(QWidget* parent = nullptr);
 
-  void OpenProject(NinjaProject* project);
-  void SwitchVariant(ui32 index);
+  void OpenProject(NinjaProject* project, QProgressBar* progress);
+  void SwitchVariant(ui32 index, QProgressBar* progress);
   void CloseProject();
 
  public slots:

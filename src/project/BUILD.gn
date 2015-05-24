@@ -17,4 +17,6 @@ shared_library("project") {
   deps = [
     "//src/third_party/ninja:ninja",
   ]
+
+  libs = [ "clang" ]
 }

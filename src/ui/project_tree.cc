@@ -12,11 +12,15 @@ namespace ui {
 ProjectTree::ProjectTree(QWidget* parent) : QTreeWidget(parent) {
 }
 
-void ProjectTree::OpenProject(NinjaProject* project) {
+void ProjectTree::OpenProject(NinjaProject* project, QProgressBar* progress) {
   Q_ASSERT(project);
   Q_ASSERT(!project_);
 
   project_.reset(project);
+
+  progress->setMaximum(project_->GetFileCount());
+  progress->setValue(0);
+  progress->setVisible(true);
 
   auto* root_item = new FolderTreeItem(project_->GetRoot());
   setHeaderLabel(project_->GetName());
@@ -27,14 +31,25 @@ void ProjectTree::OpenProject(NinjaProject* project) {
   setSortingEnabled(false);
   for (auto it = project_->begin(), end = project_->end(); it != end; ++it) {
     ShowFile(it);
+    progress->setValue(progress->value() + 1);
   }
   setSortingEnabled(true);
+
+  progress->setVisible(false);
 }
 
-void ProjectTree::SwitchVariant(ui32 index) {
+void ProjectTree::SwitchVariant(ui32 index, QProgressBar* progress) {
+  if (project_->CurrentVariant() == index) {
+    return;
+  }
+
   clear();
 
   project_->SwitchVariant(index);
+
+  progress->setMaximum(project_->GetFileCount());
+  progress->setValue(0);
+  progress->setVisible(true);
 
   auto* root_item = new FolderTreeItem(project_->GetRoot());
   addTopLevelItem(root_item);
@@ -43,8 +58,11 @@ void ProjectTree::SwitchVariant(ui32 index) {
   setSortingEnabled(false);
   for (auto it = project_->begin(), end = project_->end(); it != end; ++it) {
     ShowFile(it);
+    progress->setValue(progress->value() + 1);
   }
   setSortingEnabled(true);
+
+  progress->setVisible(false);
 }
 
 void ProjectTree::CloseProject() {
@@ -106,8 +124,10 @@ void ProjectTree::ShowFile(NinjaProject::Iterator file) {
     folder_item = folder_item->AddSubfolder(path);
   }
 
-  folder_item->addChild(
-      new FileTreeItem(file_name, file.GetCommand(), file.IsTemporary()));
+  auto new_item =
+      new FileTreeItem(file_name, file.GetCommand(), file.IsTemporary());
+  folder_item->addChild(new_item);
+  new_item->Parse(project_->GetIndex());
 }
 
 }  // namespace ui

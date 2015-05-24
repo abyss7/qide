@@ -22,6 +22,7 @@ class FileTreeItem : public QTreeWidgetItem {
   String FullPath() const;
   String RelativePath() const;
 
+  bool Parse(CXIndex index);
   void Visit(VisitorFn visitor);
 
   inline void SetFontBold(bool bold) {
@@ -36,7 +37,6 @@ class FileTreeItem : public QTreeWidgetItem {
 
  private:
   List<std::string> args_;
-  CXIndex index_ = clang_createIndex(0, 0);
   CXTranslationUnit unit_;
 };
 

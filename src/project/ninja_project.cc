@@ -72,6 +72,8 @@ StringList NinjaProject::Iterator::GetCommand() const {
 
 NinjaProject::NinjaProject(const String& project_file, ui32 default_variant)
     : config_path_(project_file) {
+  Q_ASSERT(index_);
+
   QFile file(project_file);
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
     throw std::runtime_error("Failed to open file!");
@@ -98,6 +100,10 @@ NinjaProject::NinjaProject(const String& project_file, ui32 default_variant)
   }
 
   SwitchVariant(default_variant);
+}
+
+NinjaProject::~NinjaProject() {
+  clang_disposeIndex(index_);
 }
 
 NinjaProject::Iterator NinjaProject::AddFile(String file_path) {
@@ -148,6 +154,8 @@ void NinjaProject::SwitchVariant(ui32 index) {
       AddTemporaryFile(input.first, input.second);
     }
   }
+
+  current_variant_ = index;
 }
 
 bool NinjaProject::AddTemporaryFile(String file_path,

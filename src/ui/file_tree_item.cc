@@ -2,6 +2,8 @@
 
 #include <QDir>
 
+#include <iostream>
+
 namespace ide {
 
 namespace {
@@ -30,7 +32,8 @@ CXChildVisitResult visitor_helper(CXCursor cursor, CXCursor parent,
   clang_getFileLocation(location, &file, &line, &column, &offset);
 
   // Only interested in highlighting tokens in selected file.
-  if (get_clang_string(clang_getFileName(file)) != user_data.first) {
+  if (QFileInfo(get_clang_string(clang_getFileName(file))).absoluteFilePath() !=
+      user_data.first) {
     return CXChildVisit_Continue;
   }
 
@@ -42,7 +45,7 @@ CXChildVisitResult visitor_helper(CXCursor cursor, CXCursor parent,
   clang_tokenize(tu, range, &tokens, &tokens_size);
 
   if (tokens_size > 0) {
-    for (auto i = 0u; i < tokens_size - 1; i++) {
+    for (auto i = 0u; i < tokens_size; i++) {
       auto token = get_clang_string(clang_getTokenSpelling(tu, tokens[i]));
       CXSourceLocation tl = clang_getTokenLocation(tu, tokens[i]);
 
@@ -71,28 +74,19 @@ FileTreeItem::FileTreeItem(const String& name, const StringList& args,
   tmp_font.setUnderline(!temporary);
   setFont(0, tmp_font);
 
-  auto suffix = QFileInfo(name).suffix();
-
-  if (suffix == "cc" || suffix == "cxx" || suffix == "c++") {
-    const auto c_args_size = 4096;
-    const char* c_args[c_args_size];
-    int size = 0;
-
-    Q_ASSERT(c_args_size >= args.size());
-    for (const auto& arg : args) {
-      args_.push_back(arg.toStdString());
-      c_args[size++] = args_.back().c_str();
+  for (ui32 i = 0, s = args.size(); i < s; ++i) {
+    if (i == 0) {
+      // Skip the first argument - usually it's a "clang++".
+      continue;
     }
-
-    unit_ = clang_parseTranslationUnit(index_, FullPath().toStdString().c_str(),
-                                       c_args, size, nullptr, 0,
-                                       CXTranslationUnit_None);
+    args_.push_back(args[i].toStdString());
   }
 }
 
 FileTreeItem::~FileTreeItem() {
-  clang_disposeTranslationUnit(unit_);
-  clang_disposeIndex(index_);
+  if (unit_) {
+    clang_disposeTranslationUnit(unit_);
+  }
 }
 
 String FileTreeItem::FullPath() const {
@@ -117,10 +111,44 @@ String FileTreeItem::RelativePath() const {
   return full_path;
 }
 
+bool FileTreeItem::Parse(CXIndex index) {
+  auto suffix = QFileInfo(text(0)).suffix();
+
+  if (suffix == "cc" || suffix == "cxx" || suffix == "c++") {
+    const auto c_args_size = 4096;
+    const char* c_args[c_args_size];
+    int size = 0;
+
+    Q_ASSERT(c_args_size >= args_.size());
+    for (ui32 i = 0, s = args_.size(); i < s; ++i) {
+      c_args[size++] = args_[i].c_str();
+    }
+
+    auto error =
+        clang_parseTranslationUnit2(index, nullptr, c_args, size, nullptr, 0,
+                                    CXTranslationUnit_None, &unit_);
+    if (error != CXError_Success) {
+      std::cout << "Error while parsing " << RelativePath().toStdString()
+                << std::endl;
+    } else {
+      std::cout << "Successfully parsed " << RelativePath().toStdString()
+                << std::endl;
+    }
+
+    return error == CXError_Success;
+  }
+
+  // Don't know, how to parse the file.
+  return false;
+}
+
 void FileTreeItem::Visit(VisitorFn visitor) {
   CXCursor cursor = clang_getTranslationUnitCursor(unit_);
   UserData user_data(FullPath(), visitor);
-  clang_visitChildren(cursor, visitor_helper, &user_data);
+  if (clang_visitChildren(cursor, visitor_helper, &user_data)) {
+    std::cerr << "Error while visiting " << RelativePath().toStdString()
+              << std::endl;
+  }
 }
 
 bool FileTreeItem::operator<(const QTreeWidgetItem& other) const {

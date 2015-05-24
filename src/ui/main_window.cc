@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
   ui_.setupUi(this);
   ui_.splitter->setStretchFactor(0, 1);
   ui_.splitter->setStretchFactor(1, 2);
+  ui_.progressBar->setVisible(false);
 }
 
 void MainWindow::NewProject() {
@@ -61,7 +62,7 @@ void MainWindow::OpenProject() {
   ui_.actionClose->activate(QAction::Trigger);
   try {
     auto new_project = new ide::NinjaProject(project_path);
-    ui_.projectTree->OpenProject(new_project);
+    ui_.projectTree->OpenProject(new_project, ui_.progressBar);
     ui_.splitter->setEnabled(true);
     ui_.comboBox->setEnabled(false);
     ui_.codeEditor->setEnabled(false);
@@ -86,7 +87,7 @@ void MainWindow::SwitchVariant(int index) {
   ui_.buttonRemoveFile->setEnabled(false);
   ui_.buttonSaveFile->setEnabled(false);
 
-  ui_.projectTree->SwitchVariant(static_cast<unsigned>(index));
+  ui_.projectTree->SwitchVariant(static_cast<unsigned>(index), ui_.progressBar);
 }
 
 void MainWindow::CloseProject() {

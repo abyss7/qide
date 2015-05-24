@@ -1,3 +1,4 @@
+out/Debug.gn/gen/src/ui
 out/Release.gn/gen/src/ui
 src
 /usr/include/qt5
