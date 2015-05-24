@@ -6,9 +6,63 @@
 #include <QMessageBox>
 #include <QPalette>
 
-#include <iostream>
-
 namespace ide {
+
+namespace {
+
+using UserData = Pair<String, ui::CodeEditor::VisitorFn>;
+
+String get_clang_string(CXString str) {
+  const char* tmp = clang_getCString(str);
+  if (tmp == NULL) {
+    return "";
+  } else {
+    String translated(tmp);
+    clang_disposeString(str);
+    return translated;
+  }
+}
+
+CXChildVisitResult visitor_helper(CXCursor cursor, CXCursor parent,
+                                  CXClientData client_data) {
+  auto& user_data = *reinterpret_cast<UserData*>(client_data);
+
+  CXFile file;
+  ui32 line, column, offset;
+
+  CXSourceLocation location = clang_getCursorLocation(cursor);
+  clang_getFileLocation(location, &file, &line, &column, &offset);
+
+  // Only interested in highlighting tokens in selected file.
+  if (QFileInfo(get_clang_string(clang_getFileName(file))).absoluteFilePath() !=
+      user_data.first) {
+    return CXChildVisit_Continue;
+  }
+
+  CXTranslationUnit tu = clang_Cursor_getTranslationUnit(cursor);
+  CXSourceRange range = clang_getCursorExtent(cursor);
+
+  CXToken* tokens;
+  ui32 tokens_size;
+  clang_tokenize(tu, range, &tokens, &tokens_size);
+
+  if (tokens_size > 0) {
+    for (auto i = 0u; i < tokens_size; i++) {
+      auto token = get_clang_string(clang_getTokenSpelling(tu, tokens[i]));
+      CXSourceLocation tl = clang_getTokenLocation(tu, tokens[i]);
+
+      clang_getFileLocation(tl, &file, &line, &column, &offset);
+
+      user_data.second(line, column, token.size(),
+                       clang_getTokenKind(tokens[i]));
+    }
+  }
+
+  return CXChildVisit_Continue;
+}
+
+}  // namespace
+
 namespace ui {
 
 CodeEditor::CodeEditor(QWidget* parent)
@@ -17,8 +71,8 @@ CodeEditor::CodeEditor(QWidget* parent)
 }
 
 String CodeEditor::CurrentFilePath() const {
-  if (current_item_) {
-    return current_item_->FullPath();
+  if (item_) {
+    return item_->FullPath();
   }
   return QString();
 }
@@ -26,14 +80,23 @@ String CodeEditor::CurrentFilePath() const {
 void CodeEditor::CloseFile() {
   SaveFile();
 
-  if (current_item_) {
+  if (item_) {
     clear();
-    current_item_->SetFontBold(false);
-    current_item_ = nullptr;
+    item_->SetFontBold(false);
+    item_ = nullptr;
   }
 
   setEnabled(false);
   setExtraSelections({});
+
+  if (unit_) {
+    clang_disposeTranslationUnit(unit_);
+    unit_ = nullptr;
+  }
+  if (index_) {
+    clang_disposeIndex(index_);
+    index_ = nullptr;
+  }
 }
 
 void CodeEditor::OpenFile(QTreeWidgetItem* item, int) {
@@ -50,7 +113,7 @@ void CodeEditor::OpenFile(QTreeWidgetItem* item, int) {
 }
 
 void CodeEditor::SaveFile() {
-  if (current_item_) {
+  if (item_) {
     QFile file(CurrentFilePath() + ".save");
     if (file.open(QIODevice::WriteOnly | QIODevice::Text |
                   QIODevice::Truncate)) {
@@ -113,8 +176,8 @@ void CodeEditor::HighlightToken(ui32 line, ui32 column, ui32 length,
 bool CodeEditor::OpenFile(FileTreeItem* item) {
   CloseFile();
 
-  current_item_ = item;
-  current_item_->SetFontBold(true);
+  item_ = item;
+  item_->SetFontBold(true);
 
   QFile file(CurrentFilePath());
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -125,16 +188,48 @@ bool CodeEditor::OpenFile(FileTreeItem* item) {
 
   setPlainText(file.readAll());
   setEnabled(true);
-  current_item_->Visit(
-      [this](ui32 line, ui32 column, ui32 length, CXTokenKind kind) {
-        HighlightToken(line, column, length, kind);
-      });
+  if (ParseFile()) {
+    VisitFile([this](ui32 line, ui32 column, ui32 length, CXTokenKind kind) {
+      HighlightToken(line, column, length, kind);
+    });
+  }
   textCursor().setPosition(0);
   HighlightCurrentLine();
 
   modificationChanged(false);
 
   return true;
+}
+
+bool CodeEditor::ParseFile() {
+  auto suffix = QFileInfo(item_->text(0)).suffix();
+
+  if (suffix == "cc" || suffix == "cxx" || suffix == "c++") {
+    const auto c_args_size = 4096;
+    const char* c_args[c_args_size];
+    int size = 0;
+
+    Q_ASSERT(c_args_size >= item_->GetArgs().size());
+    for (ui32 i = 0, s = item_->GetArgs().size(); i < s; ++i) {
+      c_args[size++] = item_->GetArgs()[i].c_str();
+    }
+
+    index_ = clang_createIndex(0, 1);
+    auto error = clang_parseTranslationUnit2(
+        index_, nullptr, c_args, size, nullptr, 0,
+        CXTranslationUnit_DetailedPreprocessingRecord, &unit_);
+
+    return error == CXError_Success;
+  }
+
+  // Don't know, how to parse the file.
+  return false;
+}
+
+void CodeEditor::VisitFile(VisitorFn visitor) {
+  CXCursor cursor = clang_getTranslationUnitCursor(unit_);
+  UserData user_data(item_->FullPath(), visitor);
+  clang_visitChildren(cursor, visitor_helper, &user_data);
 }
 
 void CodeEditor::HighlightCurrentLine() {

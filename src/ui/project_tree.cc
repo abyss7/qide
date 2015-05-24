@@ -124,10 +124,8 @@ void ProjectTree::ShowFile(NinjaProject::Iterator file) {
     folder_item = folder_item->AddSubfolder(path);
   }
 
-  auto new_item =
-      new FileTreeItem(file_name, file.GetCommand(), file.IsTemporary());
-  folder_item->addChild(new_item);
-  new_item->Parse(project_->GetIndex());
+  folder_item->addChild(
+      new FileTreeItem(file_name, file.GetCommand(), file.IsTemporary()));
 }
 
 }  // namespace ui
