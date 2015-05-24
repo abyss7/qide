@@ -75,3 +75,6 @@ src/third_party/ninja/exported/src/version.h
 src/third_party/ninja/ninja.h
 src/third_party/ninja/ninja.cc
 src/base/alias.h
+src/index/color_scheme.h
+src/index/color_scheme.cc
+src/index/BUILD.gn

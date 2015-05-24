@@ -28,6 +28,7 @@ shared_library("ui") {
   ]
 
   deps = [
+    "//src/index:index",
     "//src/project:project",
     ":main_window",
   ]

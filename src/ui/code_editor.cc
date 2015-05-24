@@ -6,6 +6,8 @@
 #include <QMessageBox>
 #include <QPalette>
 
+#include <iostream>
+
 namespace ide {
 
 namespace {
@@ -23,42 +25,70 @@ String get_clang_string(CXString str) {
   }
 }
 
-CXChildVisitResult visitor_helper(CXCursor cursor, CXCursor parent,
+CXChildVisitResult visitor_helper(CXCursor cursor, CXCursor,
                                   CXClientData client_data) {
   auto& user_data = *reinterpret_cast<UserData*>(client_data);
 
   CXFile file;
   ui32 line, column, offset;
 
-  CXSourceLocation location = clang_getCursorLocation(cursor);
-  clang_getFileLocation(location, &file, &line, &column, &offset);
+  // Get the file path by |cursor|.
+  clang_getFileLocation(clang_getCursorLocation(cursor), &file, nullptr,
+                        nullptr, nullptr);
+  auto file_path =
+      QFileInfo(get_clang_string(clang_getFileName(file))).absoluteFilePath();
 
   // Only interested in highlighting tokens in selected file.
-  if (QFileInfo(get_clang_string(clang_getFileName(file))).absoluteFilePath() !=
-      user_data.first) {
+  if (file_path != user_data.first) {
     return CXChildVisit_Continue;
   }
 
-  CXTranslationUnit tu = clang_Cursor_getTranslationUnit(cursor);
-  CXSourceRange range = clang_getCursorExtent(cursor);
+  // FIXME: remove this debug output.
+  {
+    auto range = clang_getCursorExtent(cursor);
+    auto loc1 = clang_getRangeStart(range);
+    auto loc2 = clang_getRangeEnd(range);
 
+    auto name = get_clang_string(clang_getCursorDisplayName(cursor));
+    auto kind = get_clang_string(
+        clang_getCursorKindSpelling(clang_getCursorKind(cursor)));
+    auto spelling = get_clang_string(clang_getCursorSpelling(cursor));
+
+    clang_getSpellingLocation(loc1, &file, &line, &column, &offset);
+    std::cout << line << ":" << column << "+";
+
+    clang_getSpellingLocation(loc2, &file, &line, &column, &offset);
+    std::cout << line << ":" << column << " " << kind.toStdString()
+              << std::endl;
+
+    std::cout << "\t" << name.toStdString() << ", " << spelling.toStdString()
+              << std::endl;
+  }
+
+  auto unit = clang_Cursor_getTranslationUnit(cursor);
+  auto cursor_range = clang_getCursorExtent(cursor);
+
+  // Colorify only comments as tokens.
   CXToken* tokens;
   ui32 tokens_size;
-  clang_tokenize(tu, range, &tokens, &tokens_size);
+  clang_tokenize(unit, cursor_range, &tokens, &tokens_size);
 
   if (tokens_size > 0) {
     for (auto i = 0u; i < tokens_size; i++) {
-      auto token = get_clang_string(clang_getTokenSpelling(tu, tokens[i]));
-      CXSourceLocation tl = clang_getTokenLocation(tu, tokens[i]);
+      auto token_kind = clang_getTokenKind(tokens[i]);
 
-      clang_getFileLocation(tl, &file, &line, &column, &offset);
+      if (token_kind != CXToken_Comment) {
+        continue;
+      }
 
-      user_data.second(line, column, token.size(),
-                       clang_getTokenKind(tokens[i]));
+      auto token = get_clang_string(clang_getTokenSpelling(unit, tokens[i]));
+      auto token_location = clang_getTokenLocation(unit, tokens[i]);
+      clang_getFileLocation(token_location, nullptr, &line, &column, nullptr);
+      user_data.second(line, column, token.size(), index::ColorScheme::COMMENT);
     }
   }
 
-  return CXChildVisit_Continue;
+  return CXChildVisit_Recurse;
 }
 
 }  // namespace
@@ -66,8 +96,26 @@ CXChildVisitResult visitor_helper(CXCursor cursor, CXCursor parent,
 namespace ui {
 
 CodeEditor::CodeEditor(QWidget* parent)
-    : QPlainTextEdit(parent), line_number_area_(new LineNumberArea(this)) {
+    : QPlainTextEdit(parent),
+      line_number_area_(new LineNumberArea(this)),
+      scheme_(Qt::gray, Qt::black) {
   UpdateLineNumberAreaWidth(0);
+
+  auto new_palette = palette();
+  new_palette.setColor(QPalette::Active, QPalette::Base, Qt::black);
+  new_palette.setColor(QPalette::Inactive, QPalette::Base, Qt::black);
+  setPalette(new_palette);
+
+  QTextCharFormat format;
+  format.setForeground(scheme_[index::ColorScheme::DEFAULT].fg);
+  format.setBackground(scheme_[index::ColorScheme::DEFAULT].bg);
+  setCurrentCharFormat(format);
+
+  // Fill-up the default color scheme.
+  scheme_[index::ColorScheme::LINE_NUMBER] = {Qt::gray, QColor("#2B1B17")};
+  scheme_[index::ColorScheme::HIGHLIGHT_LINE] = {Qt::gray, QColor("#2B1B17")};
+  scheme_[index::ColorScheme::COMMENT] = {Qt::cyan, Qt::black};
+  scheme_[index::ColorScheme::KEYWORD] = {Qt::yellow, Qt::black};
 }
 
 String CodeEditor::CurrentFilePath() const {
@@ -143,23 +191,10 @@ void CodeEditor::resizeEvent(QResizeEvent* event) {
 }
 
 void CodeEditor::HighlightToken(ui32 line, ui32 column, ui32 length,
-                                CXTokenKind kind) {
-  QColor color;
-
-  switch (kind) {
-    case CXToken_Comment: {
-      color = QColor("darkBlue");
-    } break;
-
-    case CXToken_Keyword: {
-      color = QColor("yellow");
-    } break;
-
-    default:
-      color = palette().text().color();
-  }
-
+                                index::ColorScheme::Kind kind) {
   QTextCursor cursor(document());
+
+  auto old_position = cursor.position();
 
   cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
   cursor.movePosition(QTextCursor::NextBlock, QTextCursor::MoveAnchor,
@@ -169,7 +204,16 @@ void CodeEditor::HighlightToken(ui32 line, ui32 column, ui32 length,
   setTextCursor(cursor);
 
   QTextCharFormat format;
-  format.setForeground(color);
+  format.setForeground(scheme_[kind].fg);
+  format.setBackground(scheme_[kind].bg);
+  setCurrentCharFormat(format);
+
+  // Restore previous state.
+  cursor.setPosition(old_position);
+  setTextCursor(cursor);
+
+  format.setForeground(scheme_[index::ColorScheme::DEFAULT].fg);
+  format.setBackground(scheme_[index::ColorScheme::DEFAULT].bg);
   setCurrentCharFormat(format);
 }
 
@@ -189,7 +233,8 @@ bool CodeEditor::OpenFile(FileTreeItem* item) {
   setPlainText(file.readAll());
   setEnabled(true);
   if (ParseFile()) {
-    VisitFile([this](ui32 line, ui32 column, ui32 length, CXTokenKind kind) {
+    VisitFile([this](ui32 line, ui32 column, ui32 length,
+                     index::ColorScheme::Kind kind) {
       HighlightToken(line, column, length, kind);
     });
   }
@@ -238,7 +283,8 @@ void CodeEditor::HighlightCurrentLine() {
   if (!isReadOnly() && isEnabled()) {
     QTextEdit::ExtraSelection selection;
 
-    selection.format.setBackground(palette().highlight().color());
+    selection.format.setBackground(
+        scheme_[index::ColorScheme::HIGHLIGHT_LINE].bg);
     selection.format.setProperty(QTextFormat::FullWidthSelection, true);
     selection.cursor = textCursor();
     selection.cursor.clearSelection();

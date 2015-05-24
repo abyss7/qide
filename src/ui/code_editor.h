@@ -1,7 +1,7 @@
 #pragma once
 
 #include <base/alias.h>
-
+#include <index/color_scheme.h>
 #include <ui/file_tree_item.h>
 #include <ui/line_number_area.h>
 
@@ -16,7 +16,8 @@ class CodeEditor : public QPlainTextEdit {
   Q_OBJECT
 
  public:
-  using VisitorFn = Fn<void(ui32 line, ui32 column, ui32 length, CXTokenKind)>;
+  using VisitorFn =
+      Fn<void(ui32 line, ui32 column, ui32 length, index::ColorScheme::Kind)>;
 
   explicit CodeEditor(QWidget* parent = nullptr);
 
@@ -33,7 +34,8 @@ class CodeEditor : public QPlainTextEdit {
  private:
   friend class LineNumberArea;
 
-  void HighlightToken(ui32 line, ui32 column, ui32 length, CXTokenKind kind);
+  void HighlightToken(ui32 line, ui32 column, ui32 length,
+                      index::ColorScheme::Kind kind);
   bool OpenFile(FileTreeItem* item);
 
   // FIXME: move those methods inside the |OpenFile()| method.
@@ -44,6 +46,7 @@ class CodeEditor : public QPlainTextEdit {
   CXIndex index_ = nullptr;
   CXTranslationUnit unit_ = nullptr;
   UniquePtr<LineNumberArea> line_number_area_;
+  index::ColorScheme scheme_;
 
  private slots:
   void HighlightCurrentLine();
