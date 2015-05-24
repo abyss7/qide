@@ -38,3 +38,21 @@ config("release") {
 config("version") {
   defines = [ "VERSION=\"$version\"" ]
 }
+
+config("llvm_includes") {
+  defines = exec_script("//build/llvm.py", [ "defines" ], "list lines")
+  include_dirs = exec_script("//build/llvm.py", [ "includedir" ], "list lines")
+}
+
+config("llvm") {
+  lib_dirs = exec_script("//build/llvm.py", [ "libdir" ], "list lines")
+
+  libs = [ "c" ]
+  libs += [
+    "clangTooling",
+    "clangFrontend",
+    "clangAST",
+  ]
+  libs += exec_script("//build/llvm.py", [ "libs" ], "list lines")
+  libs += exec_script("//build/llvm.py", [ "system-libs" ], "list lines")
+}

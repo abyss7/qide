@@ -78,3 +78,6 @@ src/base/alias.h
 src/index/color_scheme.h
 src/index/color_scheme.cc
 src/index/BUILD.gn
+src/index/clang_parser.h
+src/index/clang_parser.cc
+build/llvm.py

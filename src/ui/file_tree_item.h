@@ -17,7 +17,7 @@ class FileTreeItem : public QTreeWidgetItem {
   String FullPath() const;
   String RelativePath() const;
 
-  inline const List<std::string>& GetArgs() const { return args_; }
+  inline const std::vector<std::string>& GetArgs() const { return args_; }
   inline void SetFontBold(bool bold) {
     auto tmp_font = font(0);
     tmp_font.setBold(bold);
@@ -29,7 +29,7 @@ class FileTreeItem : public QTreeWidgetItem {
   const bool temporary;
 
  private:
-  List<std::string> args_;
+  std::vector<std::string> args_;
 };
 
 }  // namespace ui

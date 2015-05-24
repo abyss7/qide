@@ -49,6 +49,8 @@ template("qt") {
       ":$ui_action_name",
     ]
 
+    configs += invoker.configs
+
     all_dependent_configs = [ ":$config_name" ]
   }
 }

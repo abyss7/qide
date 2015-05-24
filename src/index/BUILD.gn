@@ -1,6 +1,16 @@
 shared_library("index") {
   sources = [
+    "clang_parser.cc",
+    "clang_parser.h",
     "color_scheme.cc",
     "color_scheme.h",
+  ]
+
+  configs += [
+    "//build/config:llvm",
+  ]
+
+  public_configs = [
+    "//build/config:llvm_includes",
   ]
 }

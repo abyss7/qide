@@ -1,13 +1,11 @@
 #pragma once
 
 #include <base/alias.h>
-#include <index/color_scheme.h>
+#include <index/clang_parser.h>
 #include <ui/file_tree_item.h>
 #include <ui/line_number_area.h>
 
 #include <QPlainTextEdit>
-
-#include <clang-c/Index.h>
 
 namespace ide {
 namespace ui {
@@ -16,9 +14,6 @@ class CodeEditor : public QPlainTextEdit {
   Q_OBJECT
 
  public:
-  using VisitorFn =
-      Fn<void(ui32 line, ui32 column, ui32 length, index::ColorScheme::Kind)>;
-
   explicit CodeEditor(QWidget* parent = nullptr);
 
   String CurrentFilePath() const;
@@ -38,15 +33,10 @@ class CodeEditor : public QPlainTextEdit {
                       index::ColorScheme::Kind kind);
   bool OpenFile(FileTreeItem* item);
 
-  // FIXME: move those methods inside the |OpenFile()| method.
-  bool ParseFile();
-  void VisitFile(VisitorFn visitor);
-
   FileTreeItem* item_ = nullptr;
-  CXIndex index_ = nullptr;
-  CXTranslationUnit unit_ = nullptr;
   UniquePtr<LineNumberArea> line_number_area_;
   index::ColorScheme scheme_;
+  UniquePtr<index::ClangParser> parser_;
 
  private slots:
   void HighlightCurrentLine();
