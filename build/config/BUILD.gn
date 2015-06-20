@@ -52,6 +52,8 @@ config("llvm") {
     "clangTooling",
     "clangFrontend",
     "clangAST",
+    "clangLex",
+    "clangBasic",
   ]
   libs += exec_script("//build/llvm.py", [ "libs" ], "list lines")
   libs += exec_script("//build/llvm.py", [ "system-libs" ], "list lines")

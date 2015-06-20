@@ -23,6 +23,7 @@ class ColorScheme {
     // Tokens
     COMMENT,
     KEYWORD,
+    NUMBER_LITERAL,
   };
 
   ColorScheme(QColor default_fg, QColor default_bg);

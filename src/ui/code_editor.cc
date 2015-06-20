@@ -32,6 +32,7 @@ CodeEditor::CodeEditor(QWidget* parent)
   scheme_[index::ColorScheme::HIGHLIGHT_LINE] = {Qt::gray, QColor("#2B1B17")};
   scheme_[index::ColorScheme::COMMENT] = {Qt::cyan, Qt::black};
   scheme_[index::ColorScheme::KEYWORD] = {Qt::yellow, Qt::black};
+  scheme_[index::ColorScheme::NUMBER_LITERAL] = {Qt::magenta, Qt::black};
 }
 
 String CodeEditor::CurrentFilePath() const {
