@@ -41,8 +41,8 @@ template("qt") {
   }
 
   source_set(target_name) {
-    sources = get_target_outputs(":$ui_action_name")
-    sources += get_target_outputs(":$moc_action_name")
+    sources = get_target_outputs(":$ui_action_name") +
+              get_target_outputs(":$moc_action_name")
 
     deps = [
       ":$moc_action_name",
@@ -51,6 +51,6 @@ template("qt") {
 
     configs += invoker.configs
 
-    all_dependent_configs = [ ":$config_name" ]
+    public_configs = [ ":$config_name" ]
   }
 }

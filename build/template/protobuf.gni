@@ -1,0 +1,28 @@
+template("protobuf") {
+  assert(defined(invoker.sources), "Need |sources| for protobuf")
+
+  action_name = "${target_name}_gen"
+  source_set_name = target_name
+  action_foreach(action_name) {
+    visibility = [ ":$source_set_name" ]
+    script = "//build/protoc.py"
+    sources = invoker.sources
+    outputs = [
+      "{{source_gen_dir}}/{{source_name_part}}.pb.cc",
+      "{{source_gen_dir}}/{{source_name_part}}.pb.h",
+    ]
+    args = [
+      "{{source_dir}}",
+      "{{source_gen_dir}}",
+      "{{source}}",
+    ]
+  }
+
+  source_set(target_name) {
+    sources = get_target_outputs(":$action_name")
+
+    deps = [
+      ":$action_name",
+    ]
+  }
+}

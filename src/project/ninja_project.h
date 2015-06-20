@@ -1,9 +1,12 @@
 #pragma once
 
 #include <base/alias.h>
-#include <project/project.pb.h>
 
 namespace ide {
+
+namespace proto {
+class Project;
+}  // namespace proto
 
 class NinjaProject {
  public:
@@ -34,8 +37,9 @@ class NinjaProject {
   };
 
   explicit NinjaProject(const String& project_file, ui32 default_variant = 0);
+  ~NinjaProject();
 
-  inline String GetName() const { return StdToStr(config_.name()); }
+  String GetName() const;
   inline const String& GetRoot() const { return root_path_; }
   inline ui32 GetFileCount() const {
     return persistent_files_.size() + temporary_files_.size();
@@ -53,10 +57,8 @@ class NinjaProject {
   }
 
   inline ui32 CurrentVariant() const { return current_variant_; }
-  inline ui32 VariantSize() const { return config_.variant_size(); }
-  inline String GetVariantName(ui32 index) const {
-    return StdToStr(config_.variant(index).name());
-  }
+  ui32 VariantSize() const;
+  String GetVariantName(ui32 index) const;
   void SwitchVariant(ui32 index);
 
  private:
@@ -65,7 +67,7 @@ class NinjaProject {
   void FlushOnDisk() const;
 
   const String config_path_;
-  proto::Project config_;
+  proto::Project* config_;
   PersistentFiles persistent_files_;
   TemporaryFiles temporary_files_;
   String root_path_;

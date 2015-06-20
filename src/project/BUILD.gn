@@ -1,22 +1,24 @@
 import("//build/template/pkg_config.gni")
+import("//build/template/protobuf.gni")
 
 pkg_config("protobuf") {
   packages = [ "protobuf" ]
+}
+
+protobuf("project_proto") {
+  sources = [ "project.proto" ]
 }
 
 shared_library("project") {
   sources = [
     "ninja_project.cc",
     "ninja_project.h",
-    "project.pb.cc",
-    "project.pb.h",
-    "project.proto",
   ]
 
-  configs += [ ":protobuf" ]
   deps = [
+    ":project_proto",
     "//src/third_party/ninja:ninja",
   ]
 
-  libs = [ "clang" ]
+  public_configs = [ ":protobuf" ]
 }

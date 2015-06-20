@@ -1,5 +1,7 @@
 #include <ui/main_window.h>
 
+#include "ui_main_window.h"
+
 #include <project/ninja_project.h>
 #include <ui/file_tree_item.h>
 #include <ui/folder_tree_item.h>
@@ -10,11 +12,16 @@
 namespace ide {
 namespace ui {
 
-MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
-  ui_.setupUi(this);
-  ui_.splitter->setStretchFactor(0, 1);
-  ui_.splitter->setStretchFactor(1, 2);
-  ui_.progressBar->setVisible(false);
+MainWindow::MainWindow(QWidget* parent)
+    : QMainWindow(parent), ui_(new Ui::MainWindow) {
+  ui_->setupUi(this);
+  ui_->splitter->setStretchFactor(0, 1);
+  ui_->splitter->setStretchFactor(1, 2);
+  ui_->progressBar->setVisible(false);
+}
+
+MainWindow::~MainWindow() {
+  delete ui_;
 }
 
 void MainWindow::NewProject() {
@@ -59,22 +66,22 @@ void MainWindow::OpenProject() {
     return;
   }
 
-  ui_.actionClose->activate(QAction::Trigger);
+  ui_->actionClose->activate(QAction::Trigger);
   try {
     auto new_project = new ide::NinjaProject(project_path);
-    ui_.projectTree->OpenProject(new_project, ui_.progressBar);
-    ui_.splitter->setEnabled(true);
-    ui_.comboBox->setEnabled(false);
-    ui_.codeEditor->setEnabled(false);
-    ui_.actionClose->setEnabled(true);
+    ui_->projectTree->OpenProject(new_project, ui_->progressBar);
+    ui_->splitter->setEnabled(true);
+    ui_->comboBox->setEnabled(false);
+    ui_->codeEditor->setEnabled(false);
+    ui_->actionClose->setEnabled(true);
 
     for (auto i = 0u; i < new_project->VariantSize(); ++i) {
-      ui_.configurationBox->addItem(new_project->GetVariantName(i));
+      ui_->configurationBox->addItem(new_project->GetVariantName(i));
     }
-    ui_.configurationBox->setCurrentIndex(0);
+    ui_->configurationBox->setCurrentIndex(0);
   } catch (std::exception& e) {
     QMessageBox::warning(this, "Error", e.what());
-    ui_.actionClose->activate(QAction::Trigger);
+    ui_->actionClose->activate(QAction::Trigger);
   }
 }
 
@@ -83,25 +90,26 @@ void MainWindow::SwitchVariant(int index) {
     return;
   }
 
-  ui_.codeEditor->CloseFile();
-  ui_.buttonRemoveFile->setEnabled(false);
-  ui_.buttonSaveFile->setEnabled(false);
+  ui_->codeEditor->CloseFile();
+  ui_->buttonRemoveFile->setEnabled(false);
+  ui_->buttonSaveFile->setEnabled(false);
 
-  ui_.projectTree->SwitchVariant(static_cast<unsigned>(index), ui_.progressBar);
+  ui_->projectTree->SwitchVariant(static_cast<unsigned>(index),
+                                  ui_->progressBar);
 }
 
 void MainWindow::CloseProject() {
-  ui_.codeEditor->CloseFile();
-  ui_.projectTree->CloseProject();
-  ui_.splitter->setEnabled(false);
-  ui_.actionClose->setEnabled(false);
-  ui_.buttonRemoveFile->setEnabled(false);
-  ui_.buttonSaveFile->setEnabled(false);
-  ui_.configurationBox->clear();
+  ui_->codeEditor->CloseFile();
+  ui_->projectTree->CloseProject();
+  ui_->splitter->setEnabled(false);
+  ui_->actionClose->setEnabled(false);
+  ui_->buttonRemoveFile->setEnabled(false);
+  ui_->buttonSaveFile->setEnabled(false);
+  ui_->configurationBox->clear();
 }
 
 void MainWindow::SelectFile(QTreeWidgetItem* item, QTreeWidgetItem*) {
-  ui_.buttonRemoveFile->setEnabled(
+  ui_->buttonRemoveFile->setEnabled(
       item && item->type() == FileTreeItem::Type &&
       !static_cast<FileTreeItem*>(item)->temporary);
 }

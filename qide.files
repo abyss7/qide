@@ -8,8 +8,6 @@ build/pkg-config.py
 build/qt-uic.py
 build/version.py
 src/project/BUILD.gn
-src/project/project.pb.cc
-src/project/project.pb.h
 src/project/project.proto
 src/ui/BUILD.gn
 src/ui/code_editor.cc
@@ -81,3 +79,5 @@ src/index/BUILD.gn
 src/index/clang_parser.h
 src/index/clang_parser.cc
 build/llvm.py
+build/template/protobuf.gni
+build/protoc.py

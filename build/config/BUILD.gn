@@ -6,10 +6,14 @@ config("base") {
     "-Wall",
     "-Wsign-compare",
     "-Werror",
+    "-Wno-error=unknown-warning-option",
     "-Wno-inconsistent-missing-override",
   ]
   cflags_cc = [ "-std=c++11" ]
-  include_dirs = [ "//src" ]
+  include_dirs = [
+    "//src",
+    "$root_gen_dir/src",
+  ]
 }
 
 config("debug") {
@@ -50,7 +54,15 @@ config("llvm") {
   libs = [ "c" ]
   libs += [
     "clangTooling",
+    "clangFrontendTool",
     "clangFrontend",
+    "clangDriver",
+    "clangSerialization",
+    "clangCodeGen",
+    "clangParse",
+    "clangSema",
+    "clangAnalysis",
+    "clangEdit",
     "clangAST",
     "clangLex",
     "clangBasic",

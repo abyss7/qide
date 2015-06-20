@@ -1,5 +1,6 @@
 #include <project/ninja_project.h>
 
+#include <project/project.pb.h>
 #include <third_party/ninja/ninja.h>
 
 #include <QDir>
@@ -71,33 +72,41 @@ StringList NinjaProject::Iterator::GetCommand() const {
 }
 
 NinjaProject::NinjaProject(const String& project_file, ui32 default_variant)
-    : config_path_(project_file) {
+    : config_path_(project_file), config_(new proto::Project) {
   QFile file(project_file);
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
     throw std::runtime_error("Failed to open file!");
   }
 
   auto contents = file.readAll().toStdString();
-  if (!google::protobuf::TextFormat::ParseFromString(contents, &config_)) {
+  if (!google::protobuf::TextFormat::ParseFromString(contents, config_)) {
     throw std::runtime_error("Project file is malformed!");
   }
 
-  root_path_ = StdToStr(config_.root());
+  root_path_ = StdToStr(config_->root());
   if (root_path_[0] != '/') {
     root_path_ = QDir::cleanPath(QFileInfo(project_file).absoluteDir().path() +
                                  QDir::separator() + root_path_);
   }
 
-  for (auto i = 0, s = config_.file_size(); i < s; ++i) {
-    persistent_files_.insert(StdToStr(config_.file(i)), i);
+  for (auto i = 0, s = config_->file_size(); i < s; ++i) {
+    persistent_files_.insert(StdToStr(config_->file(i)), i);
     // TODO: check that all files are within root path.
   }
 
-  if (config_.variant().empty()) {
+  if (config_->variant_size() == 0) {
     return;
   }
 
   SwitchVariant(default_variant);
+}
+
+NinjaProject::~NinjaProject() {
+  delete config_;
+}
+
+String NinjaProject::GetName() const {
+  return StdToStr(config_->name());
 }
 
 NinjaProject::Iterator NinjaProject::AddFile(String file_path) {
@@ -117,8 +126,8 @@ NinjaProject::Iterator NinjaProject::AddFile(String file_path) {
     return end();
   }
 
-  config_.add_file()->assign(file_path.toStdString());
-  auto it = persistent_files_.insert(file_path, config_.file_size() - 1);
+  config_->add_file()->assign(file_path.toStdString());
+  auto it = persistent_files_.insert(file_path, config_->file_size() - 1);
   FlushOnDisk();
 
   return Iterator(it, persistent_files_.end(), temporary_files_.begin(),
@@ -131,12 +140,20 @@ void NinjaProject::RemoveFile(const String& file_path) {
   RemoveFile(it.value());
 }
 
+ui32 NinjaProject::VariantSize() const {
+  return config_->variant_size();
+}
+
+String NinjaProject::GetVariantName(ui32 index) const {
+  return StdToStr(config_->variant(index).name());
+}
+
 void NinjaProject::SwitchVariant(ui32 index) {
-  if (index >= static_cast<ui32>(config_.variant_size())) {
+  if (index >= static_cast<ui32>(config_->variant_size())) {
     throw std::runtime_error("Trying to switch to non-existent variant!");
   }
 
-  const auto& config = config_.variant(index);
+  const auto& config = config_->variant(index);
   auto build_dir = GetRoot() + QDir::separator() + StdToStr(config.build_dir());
   Ninja ninja(build_dir);
   QDir::setCurrent(build_dir);
@@ -180,9 +197,9 @@ bool NinjaProject::AddTemporaryFile(String file_path,
 }
 
 void NinjaProject::RemoveFile(int file_index) {
-  Q_ASSERT(file_index > -1 && file_index < config_.file_size());
-  config_.mutable_file()->SwapElements(file_index, config_.file_size() - 1);
-  config_.mutable_file()->RemoveLast();
+  Q_ASSERT(file_index > -1 && file_index < config_->file_size());
+  config_->mutable_file()->SwapElements(file_index, config_->file_size() - 1);
+  config_->mutable_file()->RemoveLast();
   FlushOnDisk();
 }
 
@@ -190,7 +207,7 @@ void NinjaProject::FlushOnDisk() const {
   QFile file(config_path_ + ".save");
   file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate);
   google::protobuf::io::FileOutputStream out(file.handle());
-  google::protobuf::TextFormat::Print(config_, &out);
+  google::protobuf::TextFormat::Print(*config_, &out);
   out.Close();
 
   QDir dir;
