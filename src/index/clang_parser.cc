@@ -27,21 +27,14 @@ class Visitor : public clang::RecursiveASTVisitor<Visitor> {
     }
 
     if (!source_manager.isMacroBodyExpansion(location)) {
+      clang::Token token;
+      const auto& lang_opts = context_.getLangOpts();
+      clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
+
       auto line = source_manager.getSpellingLineNumber(location);
       auto column = source_manager.getSpellingColumnNumber(location);
-      visitor_(line, column, 9, index::ColorScheme::KEYWORD);
+      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
     }
-
-    // BEGIN DEBUG OUTPUT.
-    clang::Token token;
-    const auto& lang_opts = context_.getLangOpts();
-    clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
-
-    clang::Lexer::findLocationAfterToken(token.getLocation(),
-                                         clang::tok::TokenKind::identifier,
-                                         source_manager, lang_opts, true)
-        .dump(source_manager);
-    // END DEBUG OUTPUT.
 
     return true;
   }
@@ -57,9 +50,13 @@ class Visitor : public clang::RecursiveASTVisitor<Visitor> {
     }
 
     if (!source_manager.isMacroBodyExpansion(location)) {
+      clang::Token token;
+      const auto& lang_opts = context_.getLangOpts();
+      clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
+
       auto line = source_manager.getSpellingLineNumber(location);
       auto column = source_manager.getSpellingColumnNumber(location);
-      visitor_(line, column, 4, index::ColorScheme::KEYWORD);
+      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
     }
 
     return true;
@@ -74,9 +71,13 @@ class Visitor : public clang::RecursiveASTVisitor<Visitor> {
     }
 
     if (!source_manager.isMacroBodyExpansion(location)) {
+      clang::Token token;
+      const auto& lang_opts = context_.getLangOpts();
+      clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
+
       auto line = source_manager.getSpellingLineNumber(location);
       auto column = source_manager.getSpellingColumnNumber(location);
-      visitor_(line, column, 3, index::ColorScheme::KEYWORD);
+      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
     }
 
     return true;
@@ -91,9 +92,13 @@ class Visitor : public clang::RecursiveASTVisitor<Visitor> {
     }
 
     if (!source_manager.isMacroBodyExpansion(location)) {
+      clang::Token token;
+      const auto& lang_opts = context_.getLangOpts();
+      clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
+
       auto line = source_manager.getSpellingLineNumber(location);
       auto column = source_manager.getSpellingColumnNumber(location);
-      visitor_(line, column, 7, index::ColorScheme::KEYWORD);
+      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
     }
 
     return true;
@@ -108,9 +113,13 @@ class Visitor : public clang::RecursiveASTVisitor<Visitor> {
     }
 
     if (!source_manager.isMacroBodyExpansion(location)) {
+      clang::Token token;
+      const auto& lang_opts = context_.getLangOpts();
+      clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
+
       auto line = source_manager.getSpellingLineNumber(location);
       auto column = source_manager.getSpellingColumnNumber(location);
-      visitor_(line, column, 3, index::ColorScheme::KEYWORD);
+      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
     }
 
     return true;
@@ -126,16 +135,25 @@ class Visitor : public clang::RecursiveASTVisitor<Visitor> {
     }
 
     if (!source_manager.isMacroBodyExpansion(if_location)) {
+      clang::Token token;
+      const auto& lang_opts = context_.getLangOpts();
+      clang::Lexer::getRawToken(if_location, token, source_manager, lang_opts);
+
       auto line = source_manager.getSpellingLineNumber(if_location);
       auto column = source_manager.getSpellingColumnNumber(if_location);
-      visitor_(line, column, 2, index::ColorScheme::KEYWORD);
+      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
     }
 
     if (else_location.isValid() &&
         !source_manager.isMacroBodyExpansion(else_location)) {
+      clang::Token token;
+      const auto& lang_opts = context_.getLangOpts();
+      clang::Lexer::getRawToken(else_location, token, source_manager,
+                                lang_opts);
+
       auto line = source_manager.getSpellingLineNumber(else_location);
       auto column = source_manager.getSpellingColumnNumber(else_location);
-      visitor_(line, column, 4, index::ColorScheme::KEYWORD);
+      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
     }
 
     return true;
@@ -150,9 +168,13 @@ class Visitor : public clang::RecursiveASTVisitor<Visitor> {
     }
 
     if (!source_manager.isMacroBodyExpansion(location)) {
+      clang::Token token;
+      const auto& lang_opts = context_.getLangOpts();
+      clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
+
       auto line = source_manager.getSpellingLineNumber(location);
       auto column = source_manager.getSpellingColumnNumber(location);
-      visitor_(line, column, 6, index::ColorScheme::KEYWORD);
+      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
     }
 
     return true;
@@ -167,9 +189,13 @@ class Visitor : public clang::RecursiveASTVisitor<Visitor> {
     }
 
     if (!source_manager.isMacroBodyExpansion(location)) {
+      clang::Token token;
+      const auto& lang_opts = context_.getLangOpts();
+      clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
+
       auto line = source_manager.getSpellingLineNumber(location);
       auto column = source_manager.getSpellingColumnNumber(location);
-      visitor_(line, column, 6, index::ColorScheme::KEYWORD);
+      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
     }
 
     return true;
@@ -184,9 +210,13 @@ class Visitor : public clang::RecursiveASTVisitor<Visitor> {
     }
 
     if (!source_manager.isMacroBodyExpansion(location)) {
+      clang::Token token;
+      const auto& lang_opts = context_.getLangOpts();
+      clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
+
       auto line = source_manager.getSpellingLineNumber(location);
       auto column = source_manager.getSpellingColumnNumber(location);
-      visitor_(line, column, 5, index::ColorScheme::KEYWORD);
+      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
     }
 
     return true;
