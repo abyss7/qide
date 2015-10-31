@@ -6,11 +6,7 @@ shared_library("index") {
     "color_scheme.h",
   ]
 
-  configs += [
-    "//build/config:llvm",
-  ]
+  configs += [ "//build/config:llvm" ]
 
-  public_configs = [
-    "//build/config:llvm_includes",
-  ]
+  public_configs = [ "//build/config:llvm_includes" ]
 }

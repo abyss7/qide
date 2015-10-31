@@ -23,6 +23,7 @@ class ColorScheme {
     // Tokens
     COMMENT,
     KEYWORD,
+    NAMESPACE,
     NUMBER_LITERAL,
   };
 

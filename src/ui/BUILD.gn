@@ -10,9 +10,7 @@ qt("main_window") {
     "project_tree.h",
   ]
 
-  configs = [
-    "//build/config:llvm_includes",
-  ]
+  configs = [ "//build/config:llvm_includes" ]
 }
 
 shared_library("ui") {
@@ -37,7 +35,5 @@ shared_library("ui") {
     ":main_window",
   ]
 
-  public_configs = [
-    "//build/config:llvm_includes",
-  ]
+  public_configs = [ "//build/config:llvm_includes" ]
 }

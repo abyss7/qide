@@ -2,6 +2,7 @@
 
 #include <third_party/ninja/exported/src/state.h>
 
+#include <QPair>
 #include <QStringList>
 
 class Ninja {

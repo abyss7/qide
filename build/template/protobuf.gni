@@ -12,17 +12,21 @@ template("protobuf") {
       "{{source_gen_dir}}/{{source_name_part}}.pb.h",
     ]
     args = [
-      "{{source_dir}}",
-      "{{source_gen_dir}}",
+      rebase_path("//src", root_build_dir),
+      rebase_path("$root_gen_dir/src", root_build_dir),
       "{{source}}",
+    ]
+    deps = [
+      "//src/third_party/protobuf:protoc",
     ]
   }
 
   source_set(target_name) {
     sources = get_target_outputs(":$action_name")
 
-    deps = [
+    public_deps = [
       ":$action_name",
+      "//src/third_party/protobuf:protobuf",
     ]
   }
 }

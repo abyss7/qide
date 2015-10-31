@@ -9,7 +9,11 @@ config("base") {
     "-Wno-error=unknown-warning-option",
     "-Wno-inconsistent-missing-override",
   ]
-  cflags_cc = [ "-std=c++11" ]
+  cflags_cc = [
+    "-std=c++11",
+    "-stdlib=libc++",
+  ]
+  ldflags = [ "-stdlib=libc++" ]
   include_dirs = [
     "//src",
     "$root_gen_dir/src",

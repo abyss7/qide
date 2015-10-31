@@ -2,6 +2,7 @@
 
 #include <clang/AST/RecursiveASTVisitor.h>
 #include <clang/Lex/Lexer.h>
+#include <clang/Parse/ParseAST.h>
 #include <clang/Tooling/Tooling.h>
 
 #include <iostream>
@@ -18,22 +19,53 @@ class Visitor : public clang::RecursiveASTVisitor<Visitor> {
 
   // Declaration visitors. Keep in alphabetical order.
 
-  bool VisitNamespaceDecl(clang::NamespaceDecl* decl) {
+  bool VisitCXXRecordDecl(clang::CXXRecordDecl* decl) {
     const auto& source_manager = context_.getSourceManager();
-    auto location = decl->getLocStart();
+    const auto& lang_opts = context_.getLangOpts();
+    auto location = decl->getInnerLocStart();
+    clang::Token token;
 
     if (!source_manager.isInMainFile(location)) {
       return true;
     }
 
     if (!source_manager.isMacroBodyExpansion(location)) {
-      clang::Token token;
-      const auto& lang_opts = context_.getLangOpts();
       clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
 
       auto line = source_manager.getSpellingLineNumber(location);
       auto column = source_manager.getSpellingColumnNumber(location);
       visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
+    }
+
+    return true;
+  }
+
+  bool VisitNamespaceDecl(clang::NamespaceDecl* decl) {
+    const auto& source_manager = context_.getSourceManager();
+    const auto& lang_opts = context_.getLangOpts();
+    auto location = decl->getLocStart();
+    clang::Token token;
+
+    if (!source_manager.isInMainFile(location)) {
+      return true;
+    }
+
+    if (!source_manager.isMacroBodyExpansion(location)) {
+      clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
+
+      auto line = source_manager.getSpellingLineNumber(location);
+      auto column = source_manager.getSpellingColumnNumber(location);
+      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
+    }
+
+    location = decl->getLocation();
+    if (!source_manager.isMacroBodyExpansion(location) &&
+        !decl->isAnonymousNamespace()) {
+      clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
+
+      auto line = source_manager.getSpellingLineNumber(location);
+      auto column = source_manager.getSpellingColumnNumber(location);
+      visitor_(line, column, token.getLength(), index::ColorScheme::NAMESPACE);
     }
 
     return true;
@@ -237,8 +269,8 @@ ClangParser::ClangParser(const std::vector<std::string>& args)
 }
 
 void ClangParser::Visit(VisitorFn visitor) {
-  Visitor(visitor, unit_->getASTContext())
-      .TraverseDecl(unit_->getASTContext().getTranslationUnitDecl());
+  const auto& context = unit_->getASTContext();
+  Visitor(visitor, context).TraverseDecl(context.getTranslationUnitDecl());
 }
 
 }  // namespace index

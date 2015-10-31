@@ -1,12 +1,9 @@
-import("//build/template/pkg_config.gni")
 import("//build/template/protobuf.gni")
 
-pkg_config("protobuf") {
-  packages = [ "protobuf" ]
-}
-
 protobuf("project_proto") {
-  sources = [ "project.proto" ]
+  sources = [
+    "project.proto",
+  ]
 }
 
 shared_library("project") {
@@ -19,6 +16,4 @@ shared_library("project") {
     ":project_proto",
     "//src/third_party/ninja:ninja",
   ]
-
-  public_configs = [ ":protobuf" ]
 }
