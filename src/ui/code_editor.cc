@@ -34,6 +34,7 @@ CodeEditor::CodeEditor(QWidget* parent)
   scheme_[index::ColorScheme::KEYWORD] = {Qt::yellow, Qt::black};
   scheme_[index::ColorScheme::NAMESPACE] = {Qt::green, Qt::black};
   scheme_[index::ColorScheme::NUMBER_LITERAL] = {Qt::magenta, Qt::black};
+  scheme_[index::ColorScheme::STRING_LITERAL] = {Qt::magenta, Qt::black};
 }
 
 String CodeEditor::CurrentFilePath() const {
@@ -144,8 +145,10 @@ bool CodeEditor::OpenFile(FileTreeItem* item) {
   setPlainText(file.readAll());
 
   parser_.reset(new index::ClangParser(item_->GetArgs()));
-  parser_->Visit([this](ui32 line, ui32 column, ui32 length,
-                        index::ColorScheme::Kind kind) {
+
+  // TODO: colorify in async way.
+  parser_->Colorify([this](ui32 line, ui32 column, ui32 length,
+                           index::ColorScheme::Kind kind) {
     HighlightToken(line, column, length, kind);
   });
 

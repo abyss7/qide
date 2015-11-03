@@ -1,276 +1,87 @@
 #include <index/clang_parser.h>
 
-#include <clang/AST/RecursiveASTVisitor.h>
+#include <base/alias.h>
+
+#include <clang/Frontend/CompilerInstance.h>
+#include <clang/Frontend/FrontendActions.h>
 #include <clang/Lex/Lexer.h>
-#include <clang/Parse/ParseAST.h>
 #include <clang/Tooling/Tooling.h>
 
-#include <iostream>
-
 namespace ide {
-
-namespace {
-
-class Visitor : public clang::RecursiveASTVisitor<Visitor> {
- public:
-  Visitor(index::ClangParser::VisitorFn visitor,
-          const clang::ASTContext& context)
-      : visitor_(visitor), context_(context) {}
-
-  // Declaration visitors. Keep in alphabetical order.
-
-  bool VisitCXXRecordDecl(clang::CXXRecordDecl* decl) {
-    const auto& source_manager = context_.getSourceManager();
-    const auto& lang_opts = context_.getLangOpts();
-    auto location = decl->getInnerLocStart();
-    clang::Token token;
-
-    if (!source_manager.isInMainFile(location)) {
-      return true;
-    }
-
-    if (!source_manager.isMacroBodyExpansion(location)) {
-      clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
-
-      auto line = source_manager.getSpellingLineNumber(location);
-      auto column = source_manager.getSpellingColumnNumber(location);
-      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
-    }
-
-    return true;
-  }
-
-  bool VisitNamespaceDecl(clang::NamespaceDecl* decl) {
-    const auto& source_manager = context_.getSourceManager();
-    const auto& lang_opts = context_.getLangOpts();
-    auto location = decl->getLocStart();
-    clang::Token token;
-
-    if (!source_manager.isInMainFile(location)) {
-      return true;
-    }
-
-    if (!source_manager.isMacroBodyExpansion(location)) {
-      clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
-
-      auto line = source_manager.getSpellingLineNumber(location);
-      auto column = source_manager.getSpellingColumnNumber(location);
-      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
-    }
-
-    location = decl->getLocation();
-    if (!source_manager.isMacroBodyExpansion(location) &&
-        !decl->isAnonymousNamespace()) {
-      clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
-
-      auto line = source_manager.getSpellingLineNumber(location);
-      auto column = source_manager.getSpellingColumnNumber(location);
-      visitor_(line, column, token.getLength(), index::ColorScheme::NAMESPACE);
-    }
-
-    return true;
-  }
-
-  // Statement visitors. Keep in alphabetical order.
-
-  bool VisitCaseStmt(clang::CaseStmt* statement) {
-    const auto& source_manager = context_.getSourceManager();
-    auto location = statement->getKeywordLoc();
-
-    if (!source_manager.isInMainFile(location)) {
-      return true;
-    }
-
-    if (!source_manager.isMacroBodyExpansion(location)) {
-      clang::Token token;
-      const auto& lang_opts = context_.getLangOpts();
-      clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
-
-      auto line = source_manager.getSpellingLineNumber(location);
-      auto column = source_manager.getSpellingColumnNumber(location);
-      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
-    }
-
-    return true;
-  }
-
-  bool VisitCXXForRangeStmt(clang::CXXForRangeStmt* statement) {
-    const auto& source_manager = context_.getSourceManager();
-    auto location = statement->getForLoc();
-
-    if (!source_manager.isInMainFile(location)) {
-      return true;
-    }
-
-    if (!source_manager.isMacroBodyExpansion(location)) {
-      clang::Token token;
-      const auto& lang_opts = context_.getLangOpts();
-      clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
-
-      auto line = source_manager.getSpellingLineNumber(location);
-      auto column = source_manager.getSpellingColumnNumber(location);
-      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
-    }
-
-    return true;
-  }
-
-  bool VisitDefaultStmt(clang::DefaultStmt* statement) {
-    const auto& source_manager = context_.getSourceManager();
-    auto location = statement->getKeywordLoc();
-
-    if (!source_manager.isInMainFile(location)) {
-      return true;
-    }
-
-    if (!source_manager.isMacroBodyExpansion(location)) {
-      clang::Token token;
-      const auto& lang_opts = context_.getLangOpts();
-      clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
-
-      auto line = source_manager.getSpellingLineNumber(location);
-      auto column = source_manager.getSpellingColumnNumber(location);
-      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
-    }
-
-    return true;
-  }
-
-  bool VisitForStmt(clang::ForStmt* statement) {
-    const auto& source_manager = context_.getSourceManager();
-    auto location = statement->getForLoc();
-
-    if (!source_manager.isInMainFile(location)) {
-      return true;
-    }
-
-    if (!source_manager.isMacroBodyExpansion(location)) {
-      clang::Token token;
-      const auto& lang_opts = context_.getLangOpts();
-      clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
-
-      auto line = source_manager.getSpellingLineNumber(location);
-      auto column = source_manager.getSpellingColumnNumber(location);
-      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
-    }
-
-    return true;
-  }
-
-  bool VisitIfStmt(clang::IfStmt* statement) {
-    const auto& source_manager = context_.getSourceManager();
-    auto if_location = statement->getIfLoc();
-    auto else_location = statement->getElseLoc();
-
-    if (!source_manager.isInMainFile(if_location)) {
-      return true;
-    }
-
-    if (!source_manager.isMacroBodyExpansion(if_location)) {
-      clang::Token token;
-      const auto& lang_opts = context_.getLangOpts();
-      clang::Lexer::getRawToken(if_location, token, source_manager, lang_opts);
-
-      auto line = source_manager.getSpellingLineNumber(if_location);
-      auto column = source_manager.getSpellingColumnNumber(if_location);
-      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
-    }
-
-    if (else_location.isValid() &&
-        !source_manager.isMacroBodyExpansion(else_location)) {
-      clang::Token token;
-      const auto& lang_opts = context_.getLangOpts();
-      clang::Lexer::getRawToken(else_location, token, source_manager,
-                                lang_opts);
-
-      auto line = source_manager.getSpellingLineNumber(else_location);
-      auto column = source_manager.getSpellingColumnNumber(else_location);
-      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
-    }
-
-    return true;
-  }
-
-  bool VisitReturnStmt(clang::ReturnStmt* statement) {
-    const auto& source_manager = context_.getSourceManager();
-    auto location = statement->getReturnLoc();
-
-    if (!source_manager.isInMainFile(location)) {
-      return true;
-    }
-
-    if (!source_manager.isMacroBodyExpansion(location)) {
-      clang::Token token;
-      const auto& lang_opts = context_.getLangOpts();
-      clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
-
-      auto line = source_manager.getSpellingLineNumber(location);
-      auto column = source_manager.getSpellingColumnNumber(location);
-      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
-    }
-
-    return true;
-  }
-
-  bool VisitSwitchStmt(clang::SwitchStmt* statement) {
-    const auto& source_manager = context_.getSourceManager();
-    auto location = statement->getSwitchLoc();
-
-    if (!source_manager.isInMainFile(location)) {
-      return true;
-    }
-
-    if (!source_manager.isMacroBodyExpansion(location)) {
-      clang::Token token;
-      const auto& lang_opts = context_.getLangOpts();
-      clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
-
-      auto line = source_manager.getSpellingLineNumber(location);
-      auto column = source_manager.getSpellingColumnNumber(location);
-      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
-    }
-
-    return true;
-  }
-
-  bool VisitWhileStmt(clang::WhileStmt* statement) {
-    const auto& source_manager = context_.getSourceManager();
-    auto location = statement->getWhileLoc();
-
-    if (!source_manager.isInMainFile(location)) {
-      return true;
-    }
-
-    if (!source_manager.isMacroBodyExpansion(location)) {
-      clang::Token token;
-      const auto& lang_opts = context_.getLangOpts();
-      clang::Lexer::getRawToken(location, token, source_manager, lang_opts);
-
-      auto line = source_manager.getSpellingLineNumber(location);
-      auto column = source_manager.getSpellingColumnNumber(location);
-      visitor_(line, column, token.getLength(), index::ColorScheme::KEYWORD);
-    }
-
-    return true;
-  }
-
- private:
-  index::ClangParser::VisitorFn visitor_;
-  const clang::ASTContext& context_;
-};
-
-}  // namespace
-
 namespace index {
 
-ClangParser::ClangParser(const std::vector<std::string>& args)
-    : unit_(clang::tooling::buildASTFromCodeWithArgs("", args, "")) {
-  // TODO: check |unit_| is not |nullptr|.
-}
+ClangParser::ClangParser(const std::vector<std::string>& args) : args_(args) {}
 
-void ClangParser::Visit(VisitorFn visitor) {
-  const auto& context = unit_->getASTContext();
-  Visitor(visitor, context).TraverseDecl(context.getTranslationUnitDecl());
+void ClangParser::Colorify(ColorFn visitor) {
+  auto helper = [visitor](const clang::CompilerInstance& instance,
+                          const clang::Token& token) {
+    const auto& source_manager = instance.getSourceManager();
+    auto location = token.getLocation();
+
+    if (!source_manager.isInMainFile(location) ||
+        source_manager.isMacroBodyExpansion(location)) {
+      return;
+    }
+
+    auto line = source_manager.getSpellingLineNumber(location);
+    auto column = source_manager.getSpellingColumnNumber(location);
+
+    switch (token.getKind()) {
+      // Comments.
+      case clang::tok::comment:
+        visitor(line, column, token.getLength(), index::ColorScheme::COMMENT);
+        break;
+
+      // Keywords.
+      case clang::tok::kw_break:
+      case clang::tok::kw_case:
+      case clang::tok::kw_class:
+      case clang::tok::kw_default:
+      case clang::tok::kw_else:
+      case clang::tok::kw_false:
+      case clang::tok::kw_for:
+      case clang::tok::kw_if:
+      case clang::tok::kw_namespace:
+      case clang::tok::kw_new:
+      case clang::tok::kw_return:
+      case clang::tok::kw_struct:
+      case clang::tok::kw_switch:
+      case clang::tok::kw_this:
+      case clang::tok::kw_true:
+      case clang::tok::kw_using:
+      case clang::tok::kw_while:
+        visitor(line, column, token.getLength(), index::ColorScheme::KEYWORD);
+        break;
+
+      // Types.
+      case clang::tok::kw_auto:
+      case clang::tok::kw_bool:
+      case clang::tok::kw_char:
+      case clang::tok::kw_const:
+      case clang::tok::kw_int:
+      case clang::tok::kw_static:
+      case clang::tok::kw_void:
+        visitor(line, column, token.getLength(), index::ColorScheme::KEYWORD);
+        break;
+
+      // Literals.
+      case clang::tok::numeric_constant:
+        visitor(line, column, token.getLength(),
+                index::ColorScheme::NUMBER_LITERAL);
+        break;
+      case clang::tok::string_literal:
+        visitor(line, column, token.getLength(),
+                index::ColorScheme::STRING_LITERAL);
+        break;
+
+      // Other.
+      default:
+        visitor(line, column, token.getLength(), index::ColorScheme::DEFAULT);
+    }
+  };
+
+  clang::tooling::runToolOnCodeWithArgs(new clang::HandleTokensAction(helper),
+                                        "", args_, "");
 }
 
 }  // namespace index

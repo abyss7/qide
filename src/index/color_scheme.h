@@ -25,6 +25,7 @@ class ColorScheme {
     KEYWORD,
     NAMESPACE,
     NUMBER_LITERAL,
+    STRING_LITERAL,
   };
 
   ColorScheme(QColor default_fg, QColor default_bg);
