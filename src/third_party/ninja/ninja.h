@@ -13,7 +13,7 @@ class Ninja {
 
   inline const QString& build_dir() const { return build_dir_; }
 
-  InputList QueryAllInputs(const std::string& target);
+  InputList QueryAllInputs(const std::string& target, const QStringList& rules);
 
  private:
   const QString build_dir_;

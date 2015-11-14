@@ -1,5 +1,6 @@
 #include <ui/project_tree.h>
 
+#include <project/ninja_project.h>
 #include <ui/file_tree_item.h>
 #include <ui/folder_tree_item.h>
 
@@ -9,66 +10,40 @@
 namespace ide {
 namespace ui {
 
-ProjectTree::ProjectTree(QWidget* parent) : QTreeWidget(parent) {
+ProjectTree::ProjectTree(QWidget* parent) : QTreeWidget(parent) {}
+
+ProjectTree::~ProjectTree() {
+  CloseProject();
 }
 
 void ProjectTree::OpenProject(NinjaProject* project, QProgressBar* progress) {
   Q_ASSERT(project);
   Q_ASSERT(!project_);
+  delete project_;
+  project_ = project;
 
-  project_.reset(project);
+  Populate(progress);
 
-  progress->setMaximum(project_->GetFileCount());
-  progress->setValue(0);
-  progress->setVisible(true);
-
-  auto* root_item = new FolderTreeItem(project_->GetRoot());
-  setHeaderLabel(project_->GetName());
+  setHeaderLabel(project_->name());
   header()->show();
-  addTopLevelItem(root_item);
-  sortByColumn(0, Qt::AscendingOrder);
-
-  setSortingEnabled(false);
-  for (auto it = project_->begin(), end = project_->end(); it != end; ++it) {
-    ShowFile(it);
-    progress->setValue(progress->value() + 1);
-  }
-  setSortingEnabled(true);
-
-  progress->setVisible(false);
 }
 
 void ProjectTree::SwitchVariant(ui32 index, QProgressBar* progress) {
-  if (project_->CurrentVariant() == index) {
+  if (project_->variant() == index) {
     return;
   }
 
   clear();
 
-  project_->SwitchVariant(index);
-
-  progress->setMaximum(project_->GetFileCount());
-  progress->setValue(0);
-  progress->setVisible(true);
-
-  auto* root_item = new FolderTreeItem(project_->GetRoot());
-  addTopLevelItem(root_item);
-  sortByColumn(0, Qt::AscendingOrder);
-
-  setSortingEnabled(false);
-  for (auto it = project_->begin(), end = project_->end(); it != end; ++it) {
-    ShowFile(it);
-    progress->setValue(progress->value() + 1);
-  }
-  setSortingEnabled(true);
-
-  progress->setVisible(false);
+  project_->switch_variant(index);
+  Populate(progress);
 }
 
 void ProjectTree::CloseProject() {
   header()->close();
   clear();
-  project_.reset();
+  delete project_;
+  project_ = nullptr;
 }
 
 void ProjectTree::AddNewFile() {
@@ -76,7 +51,7 @@ void ProjectTree::AddNewFile() {
 }
 
 void ProjectTree::AddExistingFile() {
-  String dialog_path = project_->GetRoot();
+  String dialog_path = project_->root();
 
   if (!selectedItems().empty()) {
     const auto* item = selectedItems().front();
@@ -92,9 +67,9 @@ void ProjectTree::AddExistingFile() {
     return;
   }
 
-  auto it = project_->AddFile(file_name);
+  auto it = project_->AppendFile(AbsolutePath(file_name));
   if (it != project_->end()) {
-    file_name = file_name.mid(project_->GetRoot().size() + 1);
+    file_name = file_name.mid(project_->root().str.size() + 1);
     ShowFile(it);
   }
 }
@@ -110,12 +85,28 @@ void ProjectTree::RemoveFile() {
   delete item;
 }
 
-void ProjectTree::ShowFile(NinjaProject::Iterator file) {
-  const auto& file_path = *file;
+void ProjectTree::Populate(QProgressBar* progress) {
+  progress->setMaximum(project_->size());
+  progress->setValue(0);
+  progress->setVisible(true);
 
-  Q_ASSERT(!QDir::isAbsolutePath(file_path));
+  auto* root_item = new FolderTreeItem(project_->root());
+  addTopLevelItem(root_item);
 
-  auto path_elements = file_path.split(QDir::separator());
+  setSortingEnabled(false);
+  for (auto it = project_->begin(), end = project_->end(); it != end; ++it) {
+    ShowFile(it);
+    progress->setValue(progress->value() + 1);
+  }
+  setSortingEnabled(true);
+
+  // TODO: sort items.
+
+  progress->setVisible(false);
+}
+
+void ProjectTree::ShowFile(Project::Iterator file) {
+  auto path_elements = file.path().str.split(QDir::separator());
   auto file_name = path_elements.back();
   path_elements.pop_back();
 
@@ -124,8 +115,9 @@ void ProjectTree::ShowFile(NinjaProject::Iterator file) {
     folder_item = folder_item->AddSubfolder(path);
   }
 
-  folder_item->addChild(
-      new FileTreeItem(file_name, file.GetCommand(), file.IsTemporary()));
+  // FIXME: detect persistent and temporary files. For now all files are
+  //        treated as temporary.
+  folder_item->addChild(new FileTreeItem(file_name, file.args(), true));
 }
 
 }  // namespace ui

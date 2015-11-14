@@ -54,23 +54,24 @@ config("llvm_includes") {
 
 config("llvm") {
   lib_dirs = exec_script("//build/llvm.py", [ "libdir" ], "list lines")
+  include_dirs = exec_script("//build/llvm.py", [ "includedir" ], "list lines")
 
-  libs = [ "c" ]
-  libs += [
-    "clangTooling",
-    "clangFrontendTool",
-    "clangFrontend",
-    "clangDriver",
-    "clangSerialization",
-    "clangCodeGen",
-    "clangParse",
-    "clangSema",
-    "clangAnalysis",
-    "clangEdit",
-    "clangAST",
-    "clangLex",
-    "clangBasic",
-  ]
-  libs += exec_script("//build/llvm.py", [ "libs" ], "list lines")
-  libs += exec_script("//build/llvm.py", [ "system-libs" ], "list lines")
+  # libs = [ "c" ]
+  # libs += [
+  #   "clangTooling",
+  #   "clangFrontendTool",
+  #   "clangFrontend",
+  #   "clangDriver",
+  #   "clangSerialization",
+  #   "clangCodeGen",
+  #   "clangParse",
+  #   "clangSema",
+  #   "clangAnalysis",
+  #   "clangEdit",
+  #   "clangAST",
+  #   "clangLex",
+  #   "clangBasic",
+  # ]
+  # libs += exec_script("//build/llvm.py", [ "libs" ], "list lines")
+  # libs += exec_script("//build/llvm.py", [ "system-libs" ], "list lines")
 }

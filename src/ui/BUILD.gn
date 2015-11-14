@@ -30,9 +30,10 @@ shared_library("ui") {
   ]
 
   deps = [
+    ":main_window",
     "//src/index:index",
     "//src/project:project",
-    ":main_window",
+    "//src/third_party/protobuf:protobuf_lite",
   ]
 
   public_configs = [ "//build/config:llvm_includes" ]

@@ -1,12 +1,14 @@
 #pragma once
 
-#include <project/ninja_project.h>
+#include <project/base_project.h>
 
-#include <QMenu>
 #include <QProgressBar>
 #include <QTreeWidget>
 
 namespace ide {
+
+class NinjaProject;
+
 namespace ui {
 
 class ProjectTree : public QTreeWidget {
@@ -14,6 +16,7 @@ class ProjectTree : public QTreeWidget {
 
  public:
   explicit ProjectTree(QWidget* parent = nullptr);
+  ~ProjectTree();
 
   void OpenProject(NinjaProject* project, QProgressBar* progress);
   void SwitchVariant(ui32 index, QProgressBar* progress);
@@ -25,9 +28,10 @@ class ProjectTree : public QTreeWidget {
   void RemoveFile();
 
  private:
-  void ShowFile(NinjaProject::Iterator file);
+  void Populate(QProgressBar* progress);
+  void ShowFile(Project::Iterator file);
 
-  UniquePtr<NinjaProject> project_;
+  NinjaProject* project_ = nullptr;
 };
 
 }  // namespace ui

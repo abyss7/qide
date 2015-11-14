@@ -42,6 +42,7 @@ class CodeEditor : public QPlainTextEdit {
   void HighlightCurrentLine();
   void UpdateLineNumberArea(const QRect& rect, int dy);
   void UpdateLineNumberAreaWidth(int);
+  void Colorify();
 };
 
 }  // namespace ui

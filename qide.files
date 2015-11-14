@@ -13,6 +13,7 @@ build/template/qt.gni
 build/toolchain/linux/BUILD.gn
 build/version.py
 src/base/alias.h
+src/base/path.h
 src/BUILD.gn
 src/index/BUILD.gn
 src/index/clang_parser.cc
@@ -20,10 +21,15 @@ src/index/clang_parser.h
 src/index/color_scheme.cc
 src/index/color_scheme.h
 src/main.cc
+src/project/base_project.h
 src/project/BUILD.gn
+src/project/compdb_project.cc
+src/project/compdb_project.h
 src/project/ninja_project.cc
 src/project/ninja_project.h
 src/project/project.proto
+src/project/proto_project.cc
+src/project/proto_project.h
 src/third_party/ninja/BUILD.gn
 src/third_party/ninja/exported/src/browse.cc
 src/third_party/ninja/exported/src/browse.h

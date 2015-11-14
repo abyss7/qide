@@ -15,10 +15,7 @@ class ClangParser {
 
   explicit ClangParser(const std::vector<std::string>& args);
 
-  void Colorify(ColorFn visitor);
-
- private:
-  const std::vector<std::string>& args_;
+  void Colorify(ColorFn visitor, String code = "");
 };
 
 }  // namespace index

@@ -12,4 +12,5 @@ message Project {
   }
 
   repeated Variant variant = 4;
+  repeated string rules = 5;
 }

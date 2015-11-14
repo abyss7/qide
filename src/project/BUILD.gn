@@ -8,12 +8,20 @@ protobuf("project_proto") {
 
 shared_library("project") {
   sources = [
+    "base_project.h",
+    "compdb_project.cc",
+    "compdb_project.h",
     "ninja_project.cc",
     "ninja_project.h",
+    "proto_project.cc",
+    "proto_project.h",
   ]
 
   deps = [
     ":project_proto",
-    "//src/third_party/ninja:ninja",
   ]
+
+  configs += [ "//build/config:llvm" ]
+
+  libs = [ "clang" ]
 }

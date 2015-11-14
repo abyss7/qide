@@ -1,77 +1,42 @@
 #pragma once
 
-#include <base/alias.h>
+#include <project/compdb_project.h>
+#include <project/proto_project.h>
 
 namespace ide {
 
-namespace proto {
-class Project;
-}  // namespace proto
-
-class NinjaProject {
+class NinjaProject : public ProtoProject {
  public:
-  using PersistentFiles = HashMap<String, int>;
-  using TemporaryFiles = HashMap<String, StringList>;
+  explicit NinjaProject(const AbsolutePath& project_path);
 
-  class Iterator {
-   public:
-    Iterator(PersistentFiles::const_iterator current,
-             PersistentFiles::const_iterator end,
-             TemporaryFiles::const_iterator temp_begin,
-             TemporaryFiles::const_iterator temp_end);
+  ui32 size() const override;
 
-    Iterator(TemporaryFiles::const_iterator current,
-             TemporaryFiles::const_iterator end);
-
-    Iterator& operator++();
-    const String& operator*() const;
-    bool operator!=(const Iterator& other) const;
-
-    inline bool IsTemporary() const { return temp_; }
-    StringList GetCommand() const;
-
-   private:
-    PersistentFiles::const_iterator pers_begin_, pers_end_;
-    TemporaryFiles::const_iterator temp_begin_, temp_end_;
-    bool temp_;
-  };
-
-  explicit NinjaProject(const String& project_file, ui32 default_variant = 0);
-  ~NinjaProject();
-
-  String GetName() const;
-  inline const String& GetRoot() const { return root_path_; }
-  inline ui32 GetFileCount() const {
-    return persistent_files_.size() + temporary_files_.size();
-  }
-
-  Iterator AddFile(String file_path);
-  void RemoveFile(const String& file_path);
-
-  inline Iterator begin() const {
-    return Iterator(persistent_files_.begin(), persistent_files_.end(),
-                    temporary_files_.begin(), temporary_files_.end());
-  }
-  inline Iterator end() const {
-    return Iterator(temporary_files_.end(), temporary_files_.end());
-  }
-
-  inline ui32 CurrentVariant() const { return current_variant_; }
-  ui32 VariantSize() const;
-  String GetVariantName(ui32 index) const;
-  void SwitchVariant(ui32 index);
+  Iterator begin() const override;
+  Iterator end() const override;
 
  private:
-  bool AddTemporaryFile(String file_path, const StringList& command);
-  void RemoveFile(int file_index);
-  void FlushOnDisk() const;
+  class IteratorImpl : public IteratorBase {
+   public:
+    IteratorImpl(Iterator proto_current, Iterator proto_end,
+                 Iterator compdb_begin);
+    IteratorImpl(Iterator compdb_current);
+    IteratorBase* clone() const override;
 
-  const String config_path_;
-  proto::Project* config_;
-  PersistentFiles persistent_files_;
-  TemporaryFiles temporary_files_;
-  String root_path_;
-  ui32 current_variant_ = -1;
+    IteratorBase& operator++() override;
+    bool operator!=(const IteratorBase& other) const override;
+
+    RelativePath path() const override;
+    StringList args() const override;
+
+   private:
+    bool proto_;
+    Iterator proto_it_, proto_end_, compdb_it_;
+  };
+
+  bool switch_variant_impl(const AbsolutePath& build_dir,
+                           const String& target) override;
+
+  UniquePtr<CompdbProject> compdb_project_;
 };
 
 }  // namespace ide

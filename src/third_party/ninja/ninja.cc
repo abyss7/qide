@@ -17,10 +17,10 @@ struct RealFileReader : public ManifestParser::FileReader {
 
 }  // namespace
 
-Ninja::Ninja(const QString& build_dir) : build_dir_(build_dir) {
-}
+Ninja::Ninja(const QString& build_dir) : build_dir_(build_dir) {}
 
-Ninja::InputList Ninja::QueryAllInputs(const std::string& target) {
+Ninja::InputList Ninja::QueryAllInputs(const std::string& target,
+                                       const QStringList& rules) {
   InputList results;
 
   string err;
@@ -42,9 +42,11 @@ Ninja::InputList Ninja::QueryAllInputs(const std::string& target) {
     }
     visited_nodes.insert(node);
 
-    auto handle_edge = [this, &pending_nodes, &results](Edge* edge) {
+    auto handle_edge = [this, &pending_nodes, &results, &rules](Edge* edge) {
       if (edge != nullptr) {
-        if (edge->rule_->name() == "cxx") {
+        if (rules.contains(QString::fromStdString(edge->rule_->name()))) {
+          // FIXME: actually we should take only |inputs_[0]| - to be consistent
+          //        with the compdb command.
           for (const auto* input : edge->inputs_) {
             results.push_back(qMakePair(
                 build_dir() + QDir::separator() +

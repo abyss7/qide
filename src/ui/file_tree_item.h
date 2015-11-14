@@ -1,6 +1,6 @@
 #pragma once
 
-#include <base/alias.h>
+#include <base/path.h>
 
 #include <QTreeWidgetItem>
 
@@ -14,8 +14,8 @@ class FileTreeItem : public QTreeWidgetItem {
   explicit FileTreeItem(const String& name, const StringList& args,
                         bool temporary);
 
-  String FullPath() const;
-  String RelativePath() const;
+  AbsolutePath FullPath() const;
+  RelativePath RelativePath() const;
 
   inline const std::vector<std::string>& GetArgs() const { return args_; }
   inline void SetFontBold(bool bold) {

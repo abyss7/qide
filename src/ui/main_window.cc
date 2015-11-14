@@ -55,7 +55,7 @@ void MainWindow::NewProject() {
 }
 
 void MainWindow::OpenProject() {
-  QString project_path = QFileDialog::getExistingDirectory(
+  auto project_path = QFileDialog::getExistingDirectory(
       this, "Open Project Folder", QDir::homePath());
   if (project_path.isEmpty()) {
     return;
@@ -68,17 +68,23 @@ void MainWindow::OpenProject() {
 
   ui_->actionClose->activate(QAction::Trigger);
   try {
-    auto new_project = new ide::NinjaProject(project_path);
-    ui_->projectTree->OpenProject(new_project, ui_->progressBar);
+    UniquePtr<NinjaProject> new_project(
+        new NinjaProject(AbsolutePath(project_path)));
+    if (!new_project->switch_variant(0)) {
+      throw std::runtime_error("Can't switch to default variant!");
+    }
+
+    ui_->projectTree->OpenProject(new_project.get(), ui_->progressBar);
+    for (ui32 i = 0; i < new_project->variant_size(); ++i) {
+      ui_->configurationBox->addItem(new_project->variant_name(i));
+    }
+    ui_->configurationBox->setCurrentIndex(0);
+    new_project.release();
+
     ui_->splitter->setEnabled(true);
     ui_->comboBox->setEnabled(false);
     ui_->codeEditor->setEnabled(false);
     ui_->actionClose->setEnabled(true);
-
-    for (auto i = 0u; i < new_project->VariantSize(); ++i) {
-      ui_->configurationBox->addItem(new_project->GetVariantName(i));
-    }
-    ui_->configurationBox->setCurrentIndex(0);
   } catch (std::exception& e) {
     QMessageBox::warning(this, "Error", e.what());
     ui_->actionClose->activate(QAction::Trigger);
@@ -94,8 +100,7 @@ void MainWindow::SwitchVariant(int index) {
   ui_->buttonRemoveFile->setEnabled(false);
   ui_->buttonSaveFile->setEnabled(false);
 
-  ui_->projectTree->SwitchVariant(static_cast<unsigned>(index),
-                                  ui_->progressBar);
+  ui_->projectTree->SwitchVariant(static_cast<ui32>(index), ui_->progressBar);
 }
 
 void MainWindow::CloseProject() {
@@ -109,6 +114,7 @@ void MainWindow::CloseProject() {
 }
 
 void MainWindow::SelectFile(QTreeWidgetItem* item, QTreeWidgetItem*) {
+  // We can't remove non-temporary files from project.
   ui_->buttonRemoveFile->setEnabled(
       item && item->type() == FileTreeItem::Type &&
       !static_cast<FileTreeItem*>(item)->temporary);

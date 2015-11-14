@@ -134,8 +134,7 @@
              </property>
              <property name="icon">
               <iconset theme="document-new">
-               <normaloff/>
-              </iconset>
+               <normaloff>.</normaloff>.</iconset>
              </property>
              <property name="autoRaise">
               <bool>true</bool>
@@ -152,8 +151,7 @@
              </property>
              <property name="icon">
               <iconset theme="list-add">
-               <normaloff/>
-              </iconset>
+               <normaloff>.</normaloff>.</iconset>
              </property>
              <property name="autoRaise">
               <bool>true</bool>
@@ -170,8 +168,7 @@
              </property>
              <property name="icon">
               <iconset theme="list-remove">
-               <normaloff/>
-              </iconset>
+               <normaloff>.</normaloff>.</iconset>
              </property>
              <property name="autoRaise">
               <bool>true</bool>
@@ -260,8 +257,7 @@
             </property>
             <property name="icon">
              <iconset theme="document-save">
-              <normaloff/>
-             </iconset>
+              <normaloff>.</normaloff>.</iconset>
             </property>
             <property name="shortcut">
              <string>Ctrl+S</string>
@@ -319,7 +315,7 @@
      <x>0</x>
      <y>0</y>
      <width>1127</width>
-     <height>31</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">
@@ -344,8 +340,7 @@
   <action name="actionNew">
    <property name="icon">
     <iconset theme="window-new">
-     <normaloff/>
-    </iconset>
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;New</string>
@@ -360,8 +355,7 @@
   <action name="actionOpen">
    <property name="icon">
     <iconset theme="document-open">
-     <normaloff/>
-    </iconset>
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Open</string>
@@ -387,8 +381,7 @@
   <action name="actionQuit">
    <property name="icon">
     <iconset theme="exit">
-     <normaloff/>
-    </iconset>
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Quit</string>
@@ -427,6 +420,7 @@
     <slot>HighlightCurrentLine()</slot>
     <slot>SaveFile()</slot>
     <slot>OpenFile(QTreeWidgetItem*,int)</slot>
+    <slot>Colorify()</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -679,6 +673,22 @@
     <hint type="destinationlabel">
      <x>353</x>
      <y>50</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>codeEditor</sender>
+   <signal>textChanged()</signal>
+   <receiver>codeEditor</receiver>
+   <slot>Colorify()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>732</x>
+     <y>339</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>732</x>
+     <y>339</y>
     </hint>
    </hints>
   </connection>

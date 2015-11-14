@@ -90,6 +90,11 @@ void CodeEditor::SaveFile() {
       QMessageBox::warning(this, "Error", "Can't save opened file!");
     }
 
+    parser_->Colorify([this](ui32 line, ui32 column, ui32 length,
+                             index::ColorScheme::Kind kind) {
+      HighlightToken(line, column, length, kind);
+    });
+
     modificationChanged(false);
   }
 }
@@ -106,7 +111,8 @@ void CodeEditor::HighlightToken(ui32 line, ui32 column, ui32 length,
                                 index::ColorScheme::Kind kind) {
   QTextCursor cursor(document());
 
-  auto old_position = cursor.position();
+  setUndoRedoEnabled(false);
+  auto old_position = textCursor().position();
 
   cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
   cursor.movePosition(QTextCursor::NextBlock, QTextCursor::MoveAnchor,
@@ -127,6 +133,8 @@ void CodeEditor::HighlightToken(ui32 line, ui32 column, ui32 length,
   format.setForeground(scheme_[index::ColorScheme::DEFAULT].fg);
   format.setBackground(scheme_[index::ColorScheme::DEFAULT].bg);
   setCurrentCharFormat(format);
+
+  setUndoRedoEnabled(true);
 }
 
 bool CodeEditor::OpenFile(FileTreeItem* item) {
@@ -145,18 +153,13 @@ bool CodeEditor::OpenFile(FileTreeItem* item) {
   setPlainText(file.readAll());
 
   parser_.reset(new index::ClangParser(item_->GetArgs()));
-
-  // TODO: colorify in async way.
-  parser_->Colorify([this](ui32 line, ui32 column, ui32 length,
-                           index::ColorScheme::Kind kind) {
-    HighlightToken(line, column, length, kind);
-  });
+  Colorify();
 
   setEnabled(true);
   textCursor().setPosition(0);
   HighlightCurrentLine();
 
-  modificationChanged(false);
+  document()->setModified(false);
 
   return true;
 }
@@ -193,6 +196,27 @@ void CodeEditor::UpdateLineNumberArea(const QRect& rect, int dy) {
 
 void CodeEditor::UpdateLineNumberAreaWidth(int) {
   setViewportMargins(line_number_area_->CalculateWidth(), 0, 0, 0);
+}
+
+void CodeEditor::Colorify() {
+  static bool in_progress = false;
+
+  if (!parser_ || in_progress) {
+    // Nothing happend.
+    return;
+  }
+
+  in_progress = true;
+
+  // TODO: colorify in async way.
+  parser_->Colorify(
+      [this](ui32 line, ui32 column, ui32 length,
+             index::ColorScheme::Kind kind) {
+        HighlightToken(line, column, length, kind);
+      },
+      toPlainText());
+
+  in_progress = false;
 }
 
 }  // namespace ui
