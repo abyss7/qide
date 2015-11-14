@@ -3,8 +3,8 @@
 #include "ui_main_window.h"
 
 #include <project/ninja_project.h>
-#include <ui/file_tree_item.h>
-#include <ui/folder_tree_item.h>
+#include <ui/file_item.h>
+#include <ui/folder_item.h>
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -116,8 +116,8 @@ void MainWindow::CloseProject() {
 void MainWindow::SelectFile(QTreeWidgetItem* item, QTreeWidgetItem*) {
   // We can't remove non-temporary files from project.
   ui_->buttonRemoveFile->setEnabled(
-      item && item->type() == FileTreeItem::Type &&
-      !static_cast<FileTreeItem*>(item)->temporary);
+      item && item->type() == FileItem::Type &&
+      !static_cast<FileItem*>(item)->temporary);
 }
 
 }  // namespace ui

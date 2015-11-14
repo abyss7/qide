@@ -1,23 +1,23 @@
 #pragma once
 
-#include <base/path.h>
+#include <project/base_project.h>
 
 #include <QTreeWidgetItem>
 
 namespace ide {
 namespace ui {
 
-class FileTreeItem : public QTreeWidgetItem {
+class FileItem : public QTreeWidgetItem {
  public:
   enum { Type = UserType + 2 };
 
-  explicit FileTreeItem(const String& name, const StringList& args,
+  explicit FileItem(const String& name, Project::Iterator it,
                         bool temporary);
 
   AbsolutePath FullPath() const;
   RelativePath RelativePath() const;
 
-  inline const std::vector<std::string>& GetArgs() const { return args_; }
+  inline StringList args() const { return it_.args(); }
   inline void SetFontBold(bool bold) {
     auto tmp_font = font(0);
     tmp_font.setBold(bold);
@@ -29,7 +29,7 @@ class FileTreeItem : public QTreeWidgetItem {
   const bool temporary;
 
  private:
-  std::vector<std::string> args_;
+  Project::Iterator it_;
 };
 
 }  // namespace ui

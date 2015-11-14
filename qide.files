@@ -587,10 +587,10 @@ src/third_party/protobuf/exported/src/google/protobuf/wrappers.pb.h
 src/ui/BUILD.gn
 src/ui/code_editor.cc
 src/ui/code_editor.h
-src/ui/file_tree_item.cc
-src/ui/file_tree_item.h
-src/ui/folder_tree_item.cc
-src/ui/folder_tree_item.h
+src/ui/file_item.cc
+src/ui/file_item.h
+src/ui/folder_item.cc
+src/ui/folder_item.h
 src/ui/line_number_area.cc
 src/ui/line_number_area.h
 src/ui/main_window.cc

@@ -1,8 +1,8 @@
 #include <ui/project_tree.h>
 
 #include <project/ninja_project.h>
-#include <ui/file_tree_item.h>
-#include <ui/folder_tree_item.h>
+#include <ui/file_item.h>
+#include <ui/folder_item.h>
 
 #include <QFileDialog>
 #include <QHeaderView>
@@ -55,10 +55,10 @@ void ProjectTree::AddExistingFile() {
 
   if (!selectedItems().empty()) {
     const auto* item = selectedItems().front();
-    if (item->type() == FileTreeItem::Type) {
+    if (item->type() == FileItem::Type) {
       item = item->parent();
     }
-    dialog_path = static_cast<const FolderTreeItem*>(item)->FullPath();
+    dialog_path = static_cast<const FolderItem*>(item)->FullPath();
   }
   String file_name = QFileDialog::getOpenFileName(
       this, "Add File To Project", dialog_path, "All files (*.*)", 0,
@@ -75,11 +75,11 @@ void ProjectTree::AddExistingFile() {
 }
 
 void ProjectTree::RemoveFile() {
-  Q_ASSERT(selectedItems().front()->type() == FileTreeItem::Type);
+  Q_ASSERT(selectedItems().front()->type() == FileItem::Type);
 
   auto* item = selectedItems().front();
   itemActivated(nullptr, 0);
-  project_->RemoveFile(static_cast<FileTreeItem*>(item)->RelativePath());
+  project_->RemoveFile(static_cast<FileItem*>(item)->RelativePath());
   item->parent()->removeChild(item);
   // TODO: also remove all empty parent folders.
   delete item;
@@ -90,7 +90,7 @@ void ProjectTree::Populate(QProgressBar* progress) {
   progress->setValue(0);
   progress->setVisible(true);
 
-  auto* root_item = new FolderTreeItem(project_->root());
+  auto* root_item = new FolderItem(project_->root());
   addTopLevelItem(root_item);
 
   setSortingEnabled(false);
@@ -110,14 +110,14 @@ void ProjectTree::ShowFile(Project::Iterator file) {
   auto file_name = path_elements.back();
   path_elements.pop_back();
 
-  auto* folder_item = static_cast<FolderTreeItem*>(topLevelItem(0));
+  auto* folder_item = static_cast<FolderItem*>(topLevelItem(0));
   for (const auto& path : path_elements) {
     folder_item = folder_item->AddSubfolder(path);
   }
 
   // FIXME: detect persistent and temporary files. For now all files are
   //        treated as temporary.
-  folder_item->addChild(new FileTreeItem(file_name, file.args(), true));
+  folder_item->addChild(new FileItem(file_name, file, true));
 }
 
 }  // namespace ui

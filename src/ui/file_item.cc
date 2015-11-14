@@ -1,4 +1,4 @@
-#include <ui/file_tree_item.h>
+#include <ui/file_item.h>
 
 #include <QDir>
 
@@ -7,9 +7,9 @@
 namespace ide {
 namespace ui {
 
-FileTreeItem::FileTreeItem(const String& name, const StringList& args,
+FileItem::FileItem(const String& name, Project::Iterator it,
                            bool temporary)
-    : QTreeWidgetItem(Type), temporary(temporary) {
+    : QTreeWidgetItem(Type), temporary(temporary), it_(it) {
   setText(0, name);
   setToolTip(0, name);
   setIcon(0, QIcon::fromTheme("text-x-generic"));
@@ -17,17 +17,9 @@ FileTreeItem::FileTreeItem(const String& name, const StringList& args,
   auto tmp_font = font(0);
   tmp_font.setUnderline(!temporary);
   setFont(0, tmp_font);
-
-  for (ui32 i = 0, s = args.size(); i < s; ++i) {
-    if (i == 0) {
-      // Skip the first argument - usually it's a "clang++".
-      continue;
-    }
-    args_.push_back(args[i].toStdString());
-  }
 }
 
-AbsolutePath FileTreeItem::FullPath() const {
+AbsolutePath FileItem::FullPath() const {
   String full_path = text(0);
   const QTreeWidgetItem* item = this;
   while (item->parent()) {
@@ -38,7 +30,7 @@ AbsolutePath FileTreeItem::FullPath() const {
   return AbsolutePath(full_path);
 }
 
-RelativePath FileTreeItem::RelativePath() const {
+RelativePath FileItem::RelativePath() const {
   String full_path = text(0);
   const QTreeWidgetItem* item = this;
   while (item->parent()->parent()) {
@@ -49,12 +41,12 @@ RelativePath FileTreeItem::RelativePath() const {
   return ide::RelativePath(full_path);
 }
 
-bool FileTreeItem::operator<(const QTreeWidgetItem& other) const {
+bool FileItem::operator<(const QTreeWidgetItem& other) const {
+  // Sort files below folders.
   if (treeWidget()->sortColumn() == 0 && other.type() != Type) {
     return false;
   }
 
-  // FIXME: not reached.
   return QTreeWidgetItem::operator<(other);
 }
 

@@ -1,6 +1,6 @@
 #include <ui/code_editor.h>
 
-#include <ui/folder_tree_item.h>
+#include <ui/folder_item.h>
 
 #include <QDir>
 #include <QMessageBox>
@@ -37,11 +37,13 @@ CodeEditor::CodeEditor(QWidget* parent)
   scheme_[index::ColorScheme::STRING_LITERAL] = {Qt::magenta, Qt::black};
 }
 
-String CodeEditor::CurrentFilePath() const {
+AbsolutePath CodeEditor::CurrentFilePath() const {
   if (item_) {
     return item_->FullPath();
   }
-  return QString();
+
+  // FIXME: not reached.
+  return AbsolutePath(String());
 }
 
 void CodeEditor::CloseFile() {
@@ -55,8 +57,6 @@ void CodeEditor::CloseFile() {
 
   setEnabled(false);
   setExtraSelections({});
-
-  parser_.reset();
 }
 
 void CodeEditor::OpenFile(QTreeWidgetItem* item, int) {
@@ -65,11 +65,11 @@ void CodeEditor::OpenFile(QTreeWidgetItem* item, int) {
     return;
   }
 
-  if (item->type() != FileTreeItem::Type) {
+  if (item->type() != FileItem::Type) {
     return;
   }
 
-  OpenFile(static_cast<FileTreeItem*>(item));
+  OpenFile(static_cast<FileItem*>(item));
 }
 
 void CodeEditor::SaveFile() {
@@ -89,11 +89,6 @@ void CodeEditor::SaveFile() {
     } else {
       QMessageBox::warning(this, "Error", "Can't save opened file!");
     }
-
-    parser_->Colorify([this](ui32 line, ui32 column, ui32 length,
-                             index::ColorScheme::Kind kind) {
-      HighlightToken(line, column, length, kind);
-    });
 
     modificationChanged(false);
   }
@@ -137,7 +132,7 @@ void CodeEditor::HighlightToken(ui32 line, ui32 column, ui32 length,
   setUndoRedoEnabled(true);
 }
 
-bool CodeEditor::OpenFile(FileTreeItem* item) {
+bool CodeEditor::OpenFile(FileItem* item) {
   CloseFile();
 
   item_ = item;
@@ -152,7 +147,6 @@ bool CodeEditor::OpenFile(FileTreeItem* item) {
 
   setPlainText(file.readAll());
 
-  parser_.reset(new index::ClangParser(item_->GetArgs()));
   Colorify();
 
   setEnabled(true);
@@ -199,24 +193,7 @@ void CodeEditor::UpdateLineNumberAreaWidth(int) {
 }
 
 void CodeEditor::Colorify() {
-  static bool in_progress = false;
-
-  if (!parser_ || in_progress) {
-    // Nothing happend.
-    return;
-  }
-
-  in_progress = true;
-
-  // TODO: colorify in async way.
-  parser_->Colorify(
-      [this](ui32 line, ui32 column, ui32 length,
-             index::ColorScheme::Kind kind) {
-        HighlightToken(line, column, length, kind);
-      },
-      toPlainText());
-
-  in_progress = false;
+  // FIXME: do nothing for now.
 }
 
 }  // namespace ui

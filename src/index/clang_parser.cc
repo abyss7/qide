@@ -5,11 +5,7 @@
 namespace ide {
 namespace index {
 
-ClangParser::ClangParser(const std::vector<std::string>& args) {}
-
-void ClangParser::Colorify(ColorFn, String) {
-  // Does nothing for now.
-}
+ClangParser::ClangParser() {}
 
 }  // namespace index
 }  // namespace ide
