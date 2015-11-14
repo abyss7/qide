@@ -8,8 +8,11 @@ namespace ide {
 namespace ui {
 
 FileItem::FileItem(const String& name, Project::Iterator it,
-                           bool temporary)
-    : QTreeWidgetItem(Type), temporary(temporary), it_(it) {
+                   index::ClangParser* parser)
+    : QTreeWidgetItem(Type),
+      temporary(it.has_args()),
+      it_(it),
+      parser_(parser) {
   setText(0, name);
   setToolTip(0, name);
   setIcon(0, QIcon::fromTheme("text-x-generic"));
@@ -39,6 +42,14 @@ RelativePath FileItem::RelativePath() const {
   }
 
   return ide::RelativePath(full_path);
+}
+
+void FileItem::CodeComplete(ui32 line, ui32 column) {
+  if (!it_.has_args()) {
+    return;
+  }
+
+  parser_->Complete(FullPath(), it_.args(), it_.args_dir(), line, column);
 }
 
 bool FileItem::operator<(const QTreeWidgetItem& other) const {

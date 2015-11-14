@@ -6,6 +6,7 @@
 #include <ui/line_number_area.h>
 
 #include <QPlainTextEdit>
+#include <QShortcut>
 
 namespace ide {
 namespace ui {
@@ -35,6 +36,7 @@ class CodeEditor : public QPlainTextEdit {
 
   FileItem* item_ = nullptr;
   UniquePtr<LineNumberArea> line_number_area_;
+  QShortcut shortcut_;
   index::ColorScheme scheme_;
 
  private slots:
@@ -42,6 +44,7 @@ class CodeEditor : public QPlainTextEdit {
   void UpdateLineNumberArea(const QRect& rect, int dy);
   void UpdateLineNumberAreaWidth(int);
   void Colorify();
+  void CodeComplete();
 };
 
 }  // namespace ui

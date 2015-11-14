@@ -1,5 +1,6 @@
 #pragma once
 
+#include <index/clang_parser.h>
 #include <project/base_project.h>
 
 #include <QTreeWidgetItem>
@@ -12,12 +13,13 @@ class FileItem : public QTreeWidgetItem {
   enum { Type = UserType + 2 };
 
   explicit FileItem(const String& name, Project::Iterator it,
-                        bool temporary);
+                    index::ClangParser* parser);
 
   AbsolutePath FullPath() const;
   RelativePath RelativePath() const;
 
-  inline StringList args() const { return it_.args(); }
+  void CodeComplete(ui32 line, ui32 column);
+
   inline void SetFontBold(bool bold) {
     auto tmp_font = font(0);
     tmp_font.setBold(bold);
@@ -30,6 +32,7 @@ class FileItem : public QTreeWidgetItem {
 
  private:
   Project::Iterator it_;
+  index::ClangParser* parser_ = nullptr;
 };
 
 }  // namespace ui

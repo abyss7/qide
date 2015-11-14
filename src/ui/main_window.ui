@@ -421,6 +421,7 @@
     <slot>SaveFile()</slot>
     <slot>OpenFile(QTreeWidgetItem*,int)</slot>
     <slot>Colorify()</slot>
+    <slot>CodeComplete()</slot>
    </slots>
   </customwidget>
   <customwidget>

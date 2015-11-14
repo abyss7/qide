@@ -113,11 +113,27 @@ RelativePath NinjaProject::IteratorImpl::path() const {
   }
 }
 
-StringList NinjaProject::IteratorImpl::args() const {
+StringVector NinjaProject::IteratorImpl::args() const {
   if (proto_) {
     return proto_it_.args();
   } else {
     return compdb_it_.args();
+  }
+}
+
+AbsolutePath NinjaProject::IteratorImpl::args_dir() const {
+  if (proto_) {
+    return proto_it_.args_dir();
+  } else {
+    return compdb_it_.args_dir();
+  }
+}
+
+bool NinjaProject::IteratorImpl::has_args() const {
+  if (proto_) {
+    return proto_it_.has_args();
+  } else {
+    return compdb_it_.has_args();
   }
 }
 

@@ -31,7 +31,9 @@ class CompdbProject : public Project {
     bool operator!=(const IteratorBase& other) const override;
 
     RelativePath path() const override;
-    StringList args() const override;
+    StringVector args() const override;
+    AbsolutePath args_dir() const override;
+    inline bool has_args() const override { return true; }
 
    private:
     CXCompileCommands commands_;

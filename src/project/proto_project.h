@@ -35,6 +35,9 @@ class ProtoProject : public Project {
   // Returns false if file was never appended with |AppendFile()|.
 
   inline ui32 variant() const { return variant_; }
+  inline RelativePath variant_path() const {
+    return RelativePath(StdToStr(config_.variant(variant_).build_dir()));
+  }
   inline ui32 variant_size() const { return config_.variant_size(); }
   inline String variant_name(ui32 index) const {
     return StdToStr(config_.variant(index).name());
@@ -60,7 +63,12 @@ class ProtoProject : public Project {
     bool operator!=(const IteratorBase& other) const override;
 
     RelativePath path() const override;
-    StringList args() const override { return StringList(); }
+    inline StringVector args() const override { return StringVector(); }
+    inline AbsolutePath args_dir() const override {
+      // FIXME: not reached.
+      return AbsolutePath(String());
+    }
+    inline bool has_args() const override { return false; }
 
    private:
     FileIterator it_;

@@ -21,6 +21,7 @@ void ProjectTree::OpenProject(NinjaProject* project, QProgressBar* progress) {
   Q_ASSERT(!project_);
   delete project_;
   project_ = project;
+  parser_.reset(new index::ClangParser);
 
   Populate(progress);
 
@@ -114,10 +115,7 @@ void ProjectTree::ShowFile(Project::Iterator file) {
   for (const auto& path : path_elements) {
     folder_item = folder_item->AddSubfolder(path);
   }
-
-  // FIXME: detect persistent and temporary files. For now all files are
-  //        treated as temporary.
-  folder_item->addChild(new FileItem(file_name, file, true));
+  folder_item->addChild(new FileItem(file_name, file, parser_.get()));
 }
 
 }  // namespace ui

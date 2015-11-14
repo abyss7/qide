@@ -5,4 +5,8 @@ shared_library("index") {
     "color_scheme.cc",
     "color_scheme.h",
   ]
+
+  configs += [ "//build/config:llvm" ]
+
+  libs = [ "clang" ]
 }

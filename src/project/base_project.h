@@ -14,7 +14,9 @@ class Project {
     virtual bool operator!=(const IteratorBase& other) const = 0;
 
     virtual RelativePath path() const = 0;
-    virtual StringList args() const = 0;
+    virtual StringVector args() const = 0;
+    virtual AbsolutePath args_dir() const = 0;
+    virtual bool has_args() const = 0;
   };
 
  public:
@@ -33,7 +35,15 @@ class Project {
     }
 
     inline RelativePath path() const { return impl_->path(); }
-    inline StringList args() const { return impl_->args(); }
+    inline StringVector args() const {
+      // FIXME: assert(has_args()).
+      return impl_->args();
+    }
+    inline AbsolutePath args_dir() const {
+      // FIXME: assert(has_args()).
+      return impl_->args_dir();
+    }
+    inline bool has_args() const { return impl_->has_args(); }
 
    private:
     UniquePtr<IteratorBase> impl_;

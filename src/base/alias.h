@@ -2,6 +2,8 @@
 
 #include <functional>
 #include <memory>
+#include <string>
+#include <vector>
 
 #include <QHash>
 #include <QPair>
@@ -37,6 +39,7 @@ using Set = QSet<T>;
 
 using String = QString;
 using StringList = QStringList;
+using StringVector = std::vector<std::string>;
 
 template <class T>
 using UniquePtr = std::unique_ptr<T>;

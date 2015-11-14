@@ -69,8 +69,8 @@ RelativePath CompdbProject::IteratorImpl::path() const {
   return RelativePath(file_str);
 }
 
-StringList CompdbProject::IteratorImpl::args() const {
-  StringList result;
+StringVector CompdbProject::IteratorImpl::args() const {
+  StringVector result;
 
   auto command = clang_CompileCommands_getCommand(commands_, i_);
   auto args_size = clang_CompileCommand_getNumArgs(command);
@@ -82,6 +82,16 @@ StringList CompdbProject::IteratorImpl::args() const {
   }
 
   return result;
+}
+
+AbsolutePath CompdbProject::IteratorImpl::args_dir() const {
+  auto command = clang_CompileCommands_getCommand(commands_, i_);
+
+  auto dir = clang_CompileCommand_getDirectory(command);
+  String dir_str(clang_getCString(dir));
+  clang_disposeString(dir);
+
+  return AbsolutePath(dir_str);
 }
 
 }  // namespace ide

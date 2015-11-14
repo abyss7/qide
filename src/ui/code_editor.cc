@@ -14,6 +14,8 @@ namespace ui {
 CodeEditor::CodeEditor(QWidget* parent)
     : QPlainTextEdit(parent),
       line_number_area_(new LineNumberArea(this)),
+      shortcut_(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Space), this,
+                SLOT(CodeComplete())),
       scheme_(Qt::gray, Qt::black) {
   UpdateLineNumberAreaWidth(0);
 
@@ -194,6 +196,15 @@ void CodeEditor::UpdateLineNumberAreaWidth(int) {
 
 void CodeEditor::Colorify() {
   // FIXME: do nothing for now.
+}
+
+void CodeEditor::CodeComplete() {
+  if (!item_) {
+    return;
+  }
+
+  auto cursor = textCursor();
+  item_->CodeComplete(cursor.blockNumber() + 1, cursor.positionInBlock() + 1);
 }
 
 }  // namespace ui

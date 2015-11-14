@@ -1,5 +1,6 @@
 #pragma once
 
+#include <index/clang_parser.h>
 #include <project/base_project.h>
 
 #include <QProgressBar>
@@ -32,6 +33,7 @@ class ProjectTree : public QTreeWidget {
   void ShowFile(Project::Iterator file);
 
   NinjaProject* project_ = nullptr;
+  UniquePtr<index::ClangParser> parser_;
 };
 
 }  // namespace ui
